@@ -1,0 +1,563 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Database Schema Extension for Missing Fields",
+        "description": "Add all identified missing fields to the 'objekt' table in Supabase, ensuring correct data types, constraints, and naming conventions.",
+        "details": "Use Supabase SQL migrations to add new columns for each field. For categorical fields, use ENUM types where appropriate (e.g., Energiklass, Taktyp). For YES/NO fields, use BOOLEAN. For text and number fields, use VARCHAR and NUMERIC/INTEGER as needed. Update TypeScript types in database.ts to match the new schema. Use a migration tool such as Supabase CLI (v1.130+) for versioned migrations. Ensure all fields are nullable by default unless otherwise required.",
+        "testStrategy": "Run migration scripts in a staging environment. Verify all columns are created with correct types and constraints. Use Supabase dashboard and SQL queries to check schema integrity.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze and Finalize Missing Fields and Data Types",
+            "description": "Review the 'objekt' table requirements, identify all missing fields, and determine the correct data types and constraints for each (categorical, boolean, text, numeric). Ensure naming conventions and nullability are specified.",
+            "dependencies": [],
+            "details": "Gather input from stakeholders or documentation to ensure all required fields are captured. Document the finalized list of fields and their types for use in migration scripts.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Write Supabase SQL Migration Scripts for Each Field Group",
+            "description": "Create Supabase SQL migration scripts to add the new fields to the 'objekt' table, grouped by field type (categorical, boolean, text, numeric). Use ENUM types for categorical fields, BOOLEAN for yes/no, and appropriate text/numeric types.",
+            "dependencies": [
+              1
+            ],
+            "details": "Follow Supabase migration file naming conventions. Ensure scripts are idempotent and safe for production. Place scripts in the supabase/migrations directory.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Update TypeScript Types in database.ts",
+            "description": "Synchronize the TypeScript types in database.ts with the updated schema, reflecting all new fields and their data types.",
+            "dependencies": [
+              2
+            ],
+            "details": "Update interfaces or types to match the new database schema. Ensure type safety and consistency with the migration changes.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Run and Verify Migrations in Staging",
+            "description": "Apply the migration scripts to the staging environment and verify that all new columns are created with correct types and constraints.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Use Supabase CLI to run migrations. Inspect the schema using Supabase dashboard and SQL queries. Check for errors and validate that all changes are as expected.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Document Schema Changes and Update Migration Logs",
+            "description": "Document all schema changes, including field additions and data types, and update migration logs for traceability.",
+            "dependencies": [
+              4
+            ],
+            "details": "Record the migration details in project documentation and maintain a changelog or migration log file. Ensure documentation is accessible to the team.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Update TypeScript Models and Validation Schemas",
+        "description": "Synchronize TypeScript interfaces and Zod validation schemas with the new database fields for type safety and validation.",
+        "details": "Update all relevant TypeScript interfaces (e.g., Objekt, ObjektInput) to include new fields. Use Zod (v3.22+) to define validation schemas for each field, matching UI and DB constraints. For dropdowns, use Zod enums. For number/date fields, use Zod.number()/Zod.date(). Integrate these schemas into form validation logic.",
+        "testStrategy": "Run type-checking (tsc) and unit tests for schema validation. Attempt to create/update objects with valid and invalid data to ensure validation works as expected.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Form UI: Add New Fields to /nytt/page.tsx",
+        "description": "Update the 'Nytt objekt' form to include all new fields, organized by the specified UI categories and sections.",
+        "details": "Use React (v18+) and Next.js (v14+) with Material UI (v5.15+) or Radix UI for form components. Organize fields into logical sections/tabs as per PRD. Use appropriate input types: Select for dropdowns, Switch/Checkbox for YES/NO, TextField for text/number, DatePicker for dates. Implement field grouping and collapsible sections for usability. Use React Hook Form (v7.50+) for form state management and validation integration.",
+        "testStrategy": "Manual and automated UI tests (e.g., with Playwright or Cypress) to verify all fields are present, correctly grouped, and accept input. Validate that form state updates as expected.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Form Layout and Field Grouping",
+            "description": "Plan the overall form structure, organizing new fields into logical groups and sections based on the PRD and usability best practices.",
+            "dependencies": [],
+            "details": "Determine which fields belong together, define section headers, and decide on the use of tabs or collapsible panels for grouping. Document the intended layout for implementation.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement New Fields with Correct Input Types",
+            "description": "Add all required new fields to the form, ensuring each uses the appropriate input component (e.g., Select, Switch, TextField, DatePicker) as specified.",
+            "dependencies": [
+              1
+            ],
+            "details": "For each field, select the correct Material UI or Radix UI component. Configure props such as type, label, and placeholder. Ensure accessibility and initial values are set.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate with React Hook Form",
+            "description": "Connect all new fields to React Hook Form for state management and value tracking.",
+            "dependencies": [
+              2
+            ],
+            "details": "Register each field with React Hook Form using the useForm hook. Ensure controlled/uncontrolled components are handled correctly and field names follow grouping conventions.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add Field Grouping and Collapsible Sections",
+            "description": "Implement visual grouping and collapsible/expandable sections for field groups to enhance usability.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use components such as FieldGroup, Accordion, or custom panels to group related fields. Ensure groups are labeled and accessible. Implement collapsible logic where appropriate.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Connect Validation Schemas",
+            "description": "Attach validation rules and schemas to all new fields and groups using React Hook Form's resolver or validation API.",
+            "dependencies": [
+              4
+            ],
+            "details": "Define validation schemas (e.g., with Yup or Zod) for each field and group. Integrate with React Hook Form's resolver. Display validation messages in the UI.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Test Form UI and State Updates",
+            "description": "Verify that all fields render correctly, are grouped as intended, accept input, and update form state as expected.",
+            "dependencies": [
+              5
+            ],
+            "details": "Perform manual and automated UI tests (e.g., Playwright, Cypress) to check field presence, grouping, validation, and state updates. Address any usability or functional issues found.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Dropdown Options and Field Metadata Implementation",
+        "description": "Implement dropdown/select options for all categorical fields and ensure consistent metadata for field rendering.",
+        "details": "Define static or dynamic option lists for fields like Energiklass, Byggmaterial, Kök, Taktyp, Fasadmaterial, Fönstertyp, Ventilation, Isolering, Bredband, etc. Store options in a constants file or fetch from Supabase if dynamic. Ensure options are localized if needed. Use TypeScript enums or arrays for static options. Integrate with form components for select fields.",
+        "testStrategy": "Unit test option lists for completeness and correctness. UI test to ensure dropdowns render all options and selection works.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Form Validation and Error Handling",
+        "description": "Implement robust validation for all new fields, including required fields, value ranges, and conditional logic.",
+        "details": "Use Zod schemas integrated with React Hook Form for synchronous validation. Add custom validation for fields with dependencies (e.g., if Pool is YES, require Pool type). Display inline error messages using Material UI's FormHelperText. Ensure accessibility (ARIA attributes) for error states.",
+        "testStrategy": "Automated form submission tests with valid/invalid data. Manual testing for edge cases and accessibility validation.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Required and Optional Field Validation",
+            "description": "Define which fields are required and which are optional in the Zod schema. Ensure that required fields enforce presence and optional fields allow omission.",
+            "dependencies": [],
+            "details": "Use Zod's .min(1) or .required() for required fields and .optional() for optional fields. Integrate the schema with React Hook Form using zodResolver.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Add Value Range and Type Checks",
+            "description": "Specify value ranges (e.g., min/max for numbers, valid enums for selects) and type constraints for each field in the Zod schema.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Zod's .number().min().max(), .enum(), .string(), .date(), etc., to enforce correct types and value ranges. Ensure dropdown/select fields use Zod enums matching allowed options.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Conditional Validation Logic",
+            "description": "Add custom validation rules for fields whose requirements depend on the values of other fields (e.g., if Pool is YES, Pool type is required).",
+            "dependencies": [
+              2
+            ],
+            "details": "Use Zod's .refine() or .superRefine() to implement cross-field and conditional validation logic. Ensure error messages are specific and actionable.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate Error Display with UI Components",
+            "description": "Connect validation errors to Material UI components, displaying inline error messages and ensuring accessibility compliance.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use React Hook Form's error state to show errors via FormHelperText. Add ARIA attributes to indicate error states for screen readers.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test Validation and Error Handling for Edge Cases",
+            "description": "Verify that all validation logic works as intended, including edge cases and accessibility requirements, using both automated and manual testing.",
+            "dependencies": [
+              4
+            ],
+            "details": "Write automated tests for valid/invalid submissions. Manually test conditional logic, error display, and ARIA attributes for accessibility.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "API Endpoint Updates for Create/Update Objekt",
+        "description": "Update backend API endpoints to accept and process all new fields, including validation and sanitization.",
+        "details": "Update Next.js API routes or Supabase RPC functions to handle new fields. Use Zod or Yup for backend validation. Sanitize all inputs to prevent injection attacks. Update React Query hooks (v5+) to match new API signatures. Ensure all fields are persisted and retrieved correctly.",
+        "testStrategy": "Integration tests for API endpoints using Jest or Supertest. Verify that all fields are saved and returned as expected.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update API Endpoints to Accept and Process New Fields",
+            "description": "Modify the backend API endpoints responsible for creating and updating 'objekt' to accept all new fields. Ensure the endpoints correctly parse, validate, and persist these fields to the database.",
+            "dependencies": [],
+            "details": "Update Next.js API route handlers or Supabase RPC functions to include all new fields in the request body. Ensure the backend logic maps these fields to the correct database columns and handles both create and update operations.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Validation and Sanitization for Incoming Data",
+            "description": "Integrate robust validation and sanitization for all new and existing fields in the create/update objekt API endpoints to ensure data integrity and security.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Zod or Yup to define validation schemas matching the updated TypeScript models. Apply these schemas in the API handlers to validate incoming data. Sanitize all inputs to prevent injection attacks and reject invalid or unsafe data before database operations.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Update API Client and Integration Tests",
+            "description": "Update React Query hooks and integration tests to match the new API signatures and ensure all fields are correctly handled in create/update operations.",
+            "dependencies": [
+              2
+            ],
+            "details": "Modify React Query hooks to send and receive the updated field set. Write or update integration tests using Jest or Supertest to verify that all fields are persisted and retrieved as expected, and that validation and sanitization work correctly.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Object Detail View and Listing Updates",
+        "description": "Display all new fields in the object detail view and update listings to optionally show relevant fields.",
+        "details": "Update detail view components to render new fields with proper formatting (e.g., currency, dates, booleans as icons). Use conditional rendering for optional fields. Update listing cards to show key new fields (e.g., Balkong, Hiss, Energiklass). Ensure mobile responsiveness using CSS-in-JS or Tailwind CSS (v3.4+).",
+        "testStrategy": "Manual and automated UI tests to verify all fields display correctly on desktop and mobile. Snapshot tests for detail and listing components.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Search and Filtering Enhancements",
+        "description": "Extend search and filtering capabilities to include new fields, supporting both simple and advanced queries.",
+        "details": "Update search UI to add filters for categorical, boolean, and numeric fields. Update backend queries (Supabase SQL or API) to support filtering by new fields. Use debounced input for text/number filters. Ensure performance for large datasets by using indexed columns in Supabase.",
+        "testStrategy": "Functional tests for search/filter UI. Performance tests for backend queries. Verify correct results for various filter combinations.",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update Search UI to Add Filters for New Fields",
+            "description": "Modify the frontend search interface to include filter controls for all newly supported fields, ensuring appropriate input types for categorical, boolean, and numeric data.",
+            "dependencies": [],
+            "details": "Design and implement UI components for each new filter type. Ensure filters are clearly labeled and accessible. Prioritize commonly used filters for better usability.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Update Backend Queries to Support New Filters",
+            "description": "Extend backend logic to process and apply the new filter parameters, updating SQL queries or API endpoints as needed to support filtering by the new fields.",
+            "dependencies": [
+              1
+            ],
+            "details": "Modify backend handlers to accept new filter parameters. Update query builders or ORM logic to include new fields in WHERE clauses. Ensure correct handling of data types and edge cases.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Debounced Input for Filters",
+            "description": "Add debouncing to filter input fields in the UI to prevent excessive backend requests and improve performance during rapid user input.",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate a debounce mechanism (e.g., using lodash.debounce or custom logic) for text and numeric filter inputs. Test to ensure smooth user experience and reduced unnecessary queries.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Optimize Database Indexes for Performance",
+            "description": "Analyze query patterns and add or update database indexes on columns used in filtering to ensure efficient search performance, especially for large datasets.",
+            "dependencies": [
+              2
+            ],
+            "details": "Review query execution plans. Create or adjust indexes on new filter fields. Validate improvements using query benchmarks and Supabase dashboard metrics.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test Search/Filter Functionality and Performance",
+            "description": "Conduct comprehensive functional and performance testing of the enhanced search and filtering features to ensure correctness and responsiveness.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Write and execute test cases for all filter combinations. Perform load and performance tests to verify backend efficiency. Address any issues found during testing.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Mobile Responsiveness and Accessibility Improvements",
+        "description": "Ensure all new and updated UI components are mobile-friendly and accessible according to WCAG 2.2 standards.",
+        "details": "Use responsive design techniques (CSS Grid/Flexbox, media queries). Test with device emulators and real devices. Add ARIA labels, keyboard navigation, and screen reader support for all form fields and error messages. Use Lighthouse and axe-core for accessibility audits.",
+        "testStrategy": "Manual mobile testing on multiple devices. Automated accessibility tests using axe-core and Lighthouse. Address all critical issues found.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Data Migration for Existing Records",
+        "description": "Backfill or initialize new fields for existing property records to ensure data consistency.",
+        "details": "Write Supabase SQL scripts or use Supabase Functions to set default values or migrate data for new columns. For fields with no historical data, set to NULL or sensible defaults. For partially implemented fields, migrate existing data to new schema if needed.",
+        "testStrategy": "Run migration scripts in staging. Verify data integrity and absence of data loss. Spot-check migrated records for correctness.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze Existing Data and Determine Migration Strategy",
+            "description": "Review current property records and assess the availability and quality of data for each new field. Decide for each field whether to backfill from existing data, set a default value, or leave as NULL if no historical data exists.",
+            "dependencies": [],
+            "details": "Identify fields with partial, complete, or missing historical data. Document the migration approach for each field, considering data integrity and business requirements.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Write SQL Scripts or Supabase Functions for Data Backfill",
+            "description": "Develop SQL migration scripts or Supabase Functions to backfill or initialize new fields in the property records table according to the strategy defined in the previous step.",
+            "dependencies": [
+              1
+            ],
+            "details": "Scripts should handle setting default values, migrating existing data, and ensuring that fields with no data are set to NULL or sensible defaults. Use version control for all migration scripts.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Test Migration Scripts in Staging Environment",
+            "description": "Deploy and execute the migration scripts in a staging environment to verify correctness and identify any issues before production rollout.",
+            "dependencies": [
+              2
+            ],
+            "details": "Monitor for errors, check for data loss, and ensure that all scripts complete successfully. Adjust scripts as needed based on test results.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Validate Data Integrity Post-Migration",
+            "description": "Perform thorough validation of the migrated data to ensure accuracy, completeness, and consistency with business rules.",
+            "dependencies": [
+              3
+            ],
+            "details": "Spot-check records, run automated data integrity checks, and compare pre- and post-migration data where applicable. Document any discrepancies and resolve issues.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Document Migration Process and Results",
+            "description": "Create comprehensive documentation detailing the migration strategy, scripts used, testing procedures, validation results, and any issues encountered or resolved.",
+            "dependencies": [
+              4
+            ],
+            "details": "Include rollback procedures, lessons learned, and recommendations for future migrations. Store documentation in the project knowledge base.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "User Training and Documentation",
+        "description": "Create comprehensive documentation and training materials for staff on new fields and workflows.",
+        "details": "Document all new fields, their purpose, and valid values. Update user manuals and onboarding guides. Create video walkthroughs or interactive tutorials if possible. Use tools like Storybook (v8+) for UI documentation. Schedule training sessions for staff.",
+        "testStrategy": "Collect user feedback post-training. Verify documentation accuracy and completeness. Update based on user questions.",
+        "priority": "low",
+        "dependencies": [
+          3,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Security and Data Privacy Review",
+        "description": "Review and enhance security and privacy for new fields, especially sensitive or personal data.",
+        "details": "Audit API and database for proper access controls (RLS in Supabase). Ensure all new fields are covered by authentication/authorization logic. Review GDPR compliance for personal/location data. Use OWASP best practices for input sanitization and data storage. Regularly back up data and test restore procedures.",
+        "testStrategy": "Security audit using automated tools (e.g., Snyk, OWASP ZAP). Manual review of access controls. Penetration testing for API endpoints.",
+        "priority": "high",
+        "dependencies": [
+          6,
+          10
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Audit Database Access Controls (RLS)",
+            "description": "Review and verify that Row Level Security (RLS) is enabled and properly configured for all relevant tables in Supabase, especially those containing new or sensitive fields.",
+            "dependencies": [],
+            "details": "Check that RLS is enabled for all tables storing personal or sensitive data. Review and test RLS policies to ensure only authorized users can access or modify relevant rows. Document any gaps or misconfigurations.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Review API Authentication and Authorization",
+            "description": "Assess the API endpoints to ensure robust authentication and authorization mechanisms are in place for all operations involving new fields.",
+            "dependencies": [
+              1
+            ],
+            "details": "Verify that all endpoints require proper authentication. Check that authorization logic covers new fields and enforces least privilege. Review integration with Supabase Auth and any custom logic.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Assess GDPR Compliance for New Fields",
+            "description": "Evaluate the handling of new fields for compliance with GDPR and other relevant data protection regulations.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Identify which new fields are personal or location data. Ensure data minimization, purpose limitation, and user consent are addressed. Review privacy notices and data subject rights procedures.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Input Sanitization and Storage Best Practices",
+            "description": "Apply OWASP-recommended input sanitization and secure storage practices for all new and existing fields.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Review all data entry points for proper input validation and sanitization. Ensure secure storage (e.g., encryption at rest for sensitive fields) and update code as needed.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Set Up Regular Backups and Test Restores",
+            "description": "Establish automated backup routines and regularly test data restore procedures to ensure data resilience.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Configure scheduled backups for all critical databases. Perform test restores to verify backup integrity and document the process.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Conduct Security Testing and Address Findings",
+            "description": "Perform comprehensive security testing, including automated scans and manual reviews, and remediate any identified vulnerabilities.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Use tools like Snyk and OWASP ZAP for automated testing. Conduct manual penetration testing of API and database access. Track and resolve all findings.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-29T10:41:58.748Z",
+      "updated": "2025-07-29T10:41:58.748Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

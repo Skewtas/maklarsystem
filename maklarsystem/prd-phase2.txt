@@ -1,0 +1,130 @@
+MÄKLARSYSTEM - PHASE 2 IMPLEMENTATION PRD
+
+PROJECT OVERVIEW:
+Complete the implementation of all remaining pages and functionality for the real estate management system, ensuring every button and feature works properly.
+
+CURRENT STATE:
+- Basic layout and navigation implemented
+- Dashboard with widgets (mock data)
+- Object list page with filters
+- Contact list page with filters
+- Supabase schema created
+
+REQUIREMENTS FOR PHASE 2:
+
+1. OBJECT DETAIL PAGE (/objekt/[id])
+   - Implement tabbed interface: Översikt, Beskrivningar, Spekulanter, Dokument, Parter, Affären, Uppföljning, Historik
+   - Add/edit functionality for all fields
+   - Image gallery with upload
+   - Document management
+   - Bid tracking
+   - Viewing schedule management
+
+2. CONTACT DETAIL PAGE (/kontakter/[id])
+   - Full contact information display/edit
+   - Related objects list
+   - Communication history
+   - Notes and activities
+   - Document attachments
+
+3. NEW OBJECT/CONTACT CREATION (/nytt)
+   - Dropdown menu implementation
+   - New object form (manual and via property extract)
+   - New contact form
+   - New calendar event form
+   - Form validation
+
+4. ORGANIZATIONS PAGE (/organisationer)
+   - Three tabs: Bostadsrättsföreningar, Förvaltare, Långivare
+   - CRUD operations for each type
+   - Search and filtering
+
+5. CRM PAGE (/crm)
+   - Tips and leads management
+   - Customer meetings tracking
+   - Follow-ups system
+   - Call lists
+   - Email campaigns
+
+6. CALENDAR PAGE (/kalender)
+   - Full calendar view (month/week/day)
+   - Event creation and editing
+   - Different event types with colors
+   - Drag and drop functionality
+   - Integration with objects/contacts
+
+7. TASKS PAGE (/att-gora)
+   - Task list with priorities
+   - Create/edit/delete tasks
+   - Status tracking
+   - Due date management
+   - Assignment to users
+
+8. REPORTS/BI PAGE (/bi)
+   - Sales statistics
+   - Commission tracking
+   - Performance metrics
+   - Graphical reports
+   - Export functionality
+
+9. SETTINGS PAGE (/installningar)
+   - User profile management
+   - System settings
+   - Email templates
+   - Document templates
+   - Administration section
+
+10. PROJECTS PAGE (/projekt)
+    - Project listing
+    - Project details
+    - Related objects grouping
+
+11. HELP PAGE (/hjalp)
+    - User documentation
+    - FAQs
+    - Support contact
+
+12. SUPABASE INTEGRATION
+    - Replace all mock data with real database queries
+    - Implement authentication
+    - Real-time subscriptions
+    - File upload to storage
+    - Error handling
+
+13. SEARCH FUNCTIONALITY
+    - Global search implementation
+    - Quick filters
+    - Advanced search options
+    - Search history
+
+14. NOTIFICATIONS SYSTEM
+    - Real-time notifications
+    - Notification center
+    - Email notifications
+    - Push notifications setup
+
+15. RESPONSIVE DESIGN
+    - Mobile optimization
+    - Tablet views
+    - Print styles
+    - Accessibility features
+
+TECHNICAL REQUIREMENTS:
+- Use Next.js App Router
+- TypeScript for all components
+- Tailwind CSS for styling
+- Supabase for all data operations
+- Proper error handling
+- Loading states
+- Form validation
+- Toast notifications
+- Confirmation dialogs
+
+SUCCESS CRITERIA:
+- All pages accessible and functional
+- All CRUD operations working
+- Real-time updates functioning
+- No console errors
+- Responsive on all devices
+- All forms validated
+- Search working across all entities 

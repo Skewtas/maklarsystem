@@ -1,0 +1,144 @@
+MÄKLARSYSTEM - MISSING FIELDS IMPLEMENTATION PRD
+
+PROJECT OVERVIEW:
+Implement all missing fields identified in the dashboard image that are not currently available in the existing forms and database schema. The goal is to create a comprehensive real estate management system with all the detailed property information fields that appear in the dashboard visualization.
+
+IDENTIFIED MISSING FIELDS FROM DASHBOARD IMAGE:
+
+1. PROPERTY DETAILED INFORMATION FIELDS:
+   - Driftkostnad (Operating costs) - PARTIALLY IMPLEMENTED but needs UI
+   - Avgift (Monthly fee) - PARTIALLY IMPLEMENTED but needs UI
+   - Energiklass (Energy class) - PARTIALLY IMPLEMENTED but needs UI and options
+   - Byggmaterial (Building material) - PARTIALLY IMPLEMENTED but needs UI and options
+   - Uppvärmning (Heating type) - PARTIALLY IMPLEMENTED but needs UI and options
+   - Internet (Internet availability) - PARTIALLY IMPLEMENTED but needs UI
+   - Kollektivtrafik (Public transport access) - PARTIALLY IMPLEMENTED but needs UI
+   - Parkering (Parking information) - PARTIALLY IMPLEMENTED but needs UI
+   - Tillgångsdatum (Access date) - PARTIALLY IMPLEMENTED but needs UI
+   - Visningsinfo (Viewing information) - PARTIALLY IMPLEMENTED but needs UI
+
+2. NEW FIELDS IDENTIFIED IN IMAGE:
+   - Balkong/Terrass (Balcony/Terrace) - YES/NO field
+   - Hiss (Elevator) - YES/NO field
+   - Våning (Floor number) - Number field
+   - Kök (Kitchen type) - Dropdown field
+   - Badrum antal (Number of bathrooms) - Number field
+   - Garage (Garage information) - Text/Dropdown field
+   - Förråd (Storage) - YES/NO or text field
+   - Trädgård (Garden) - YES/NO or text field
+   - Pool (Pool) - YES/NO field
+   - Kamin (Fireplace) - YES/NO field
+   - Bygglov (Building permit) - Text field
+   - Senaste renovering (Last renovation) - Date field
+   - Taktyp (Roof type) - Dropdown field
+   - Fasadmaterial (Facade material) - Dropdown field
+   - Fönstertyp (Window type) - Dropdown field
+   - Ventilation (Ventilation type) - Dropdown field
+   - Elnät (Electrical system) - Dropdown field
+   - Vatten och avlopp (Water and sewage) - Text field
+   - Brandskydd (Fire safety) - Text field
+   - Larm (Alarm system) - Text field
+   - Bredband (Broadband type) - Dropdown field
+   - Kabel-TV (Cable TV) - YES/NO field
+
+3. LOCATION AND AREA FIELDS:
+   - Närmaste skola (Nearest school) - Text field
+   - Närmaste vårdcentral (Nearest healthcare) - Text field
+   - Närmaste dagis (Nearest daycare) - Text field
+   - Avstånd till centrum (Distance to center) - Number field
+   - Havsnära (Close to sea) - YES/NO field
+   - Sjönära (Close to lake) - YES/NO field
+   - Skogsnära (Close to forest) - YES/NO field
+
+4. FINANCIAL EXTENDED FIELDS:
+   - Pantbrev (Mortgage deed) - Number field
+   - Taxeringsvärde (Tax assessment value) - Number field
+   - Kommunala avgifter (Municipal fees) - Number field
+   - Försäkringskostnad (Insurance cost) - Number field
+   - Reparationsfond (Repair fund) - Number field
+
+5. TECHNICAL SPECIFICATIONS:
+   - Elförbrukning (Electricity consumption) - Number field
+   - Vattenförbrukning (Water consumption) - Number field
+   - Uppvärmningskostnad (Heating cost) - Number field
+   - Isolering (Insulation type) - Dropdown field
+
+TECHNICAL REQUIREMENTS:
+
+1. DATABASE SCHEMA UPDATES:
+   - Add new columns to objekt table in Supabase
+   - Create migration scripts for the new fields
+   - Update TypeScript types in database.ts
+   - Ensure proper field types and constraints
+
+2. FORM UPDATES:
+   - Update /nytt/page.tsx to include all new fields
+   - Organize fields in logical sections/tabs
+   - Add proper validation for each field type
+   - Implement dropdown options for categorical fields
+
+3. DISPLAY UPDATES:
+   - Update object detail views to show new fields
+   - Update object listings to optionally display relevant fields
+   - Create proper formatting for different field types
+   - Add search/filter capabilities for new fields
+
+4. UI/UX IMPROVEMENTS:
+   - Organize fields in collapsible sections
+   - Add tooltips for complex fields
+   - Implement proper field validation
+   - Use appropriate input types (date, number, select, etc.)
+
+5. API UPDATES:
+   - Update API endpoints to handle new fields
+   - Add validation middleware
+   - Ensure proper data sanitization
+   - Update React Query hooks
+
+SUCCESS CRITERIA:
+- All identified fields are added to the database schema
+- All fields are available in the "Nytt objekt" form
+- All fields display properly in object detail views
+- Form validation works for all field types
+- Search and filtering includes relevant new fields
+- Data is properly saved and retrieved
+- UI remains clean and user-friendly despite additional fields
+- Mobile responsiveness is maintained
+
+FIELD CATEGORIZATION FOR UI:
+
+1. Grundläggande Information (Basic Information):
+   - Existing fields remain as is
+
+2. Utökad Fastighetsinformation (Extended Property Info):
+   - Balkong/Terrass, Hiss, Våning, Garage, Förråd, Trädgård, Pool, Kamin
+
+3. Teknisk Information (Technical Information):
+   - Energiklass, Byggmaterial, Uppvärmning, Ventilation, Elnät, Isolering
+   - Elförbrukning, Vattenförbrukning, Uppvärmningskostnad
+
+4. Kök och Badrum (Kitchen and Bathrooms):
+   - Kök, Badrum antal
+
+5. Säkerhet och System (Security and Systems):
+   - Brandskydd, Larm, Bredband, Kabel-TV, Internet
+
+6. Byggnad och Konstruktion (Building and Construction):
+   - Taktyp, Fasadmaterial, Fönstertyp, Bygglov, Senaste renovering
+   - Vatten och avlopp
+
+7. Läge och Omgivning (Location and Environment):
+   - Närmaste skola, Närmaste vårdcentral, Närmaste dagis
+   - Avstånd till centrum, Havsnära, Sjönära, Skogsnära
+   - Kollektivtrafik
+
+8. Ekonomi (Extended Financial):
+   - Driftkostnad, Avgift, Pantbrev, Taxeringsvärde
+   - Kommunala avgifter, Försäkringskostnad, Reparationsfond
+
+IMPLEMENTATION PRIORITY:
+1. Database schema updates (highest priority)
+2. Basic form implementation for most common fields
+3. UI organization and validation
+4. Advanced fields and filtering
+5. Search integration and optimization 

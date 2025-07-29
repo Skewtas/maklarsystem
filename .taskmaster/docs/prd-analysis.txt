@@ -1,0 +1,25 @@
+# PRD: Kodbas Analys och Förbättringar
+
+## Översikt
+Analysera varje fil i kodbasen för att säkerställa bästa praxis. Eliminera svagheter i sök/filter/sortering, pagination, säkerhet (RLS-granskning), prestanda (lägg till index för sök), UX (lägg till laddningsstater och accessibility). Implementera förbättringar för säkerhet, skalbarhet, och nya features som avancerad sök, bulk-åtgärder.
+
+## Krav
+- Granska filer gruppvis: UI, API, databas, etc.
+- Använd Context7 för Next.js 15, React 19, Supabase (RLS/realtime), Tailwind, TanStack Query.
+- Lägg till pagination för stora datamängder.
+- Implementera sök/filter/sortering med TanStack Query och Supabase index.
+- Granska och förstärk RLS-policies.
+- Lägg till laddningsstater, error handling, accessibility (ARIA, keyboard nav).
+- Bulk-åtgärder: välj flera, radera/taggar/exportera.
+
+## Tasks Breakdown
+1. Granska databas-schema och typer.
+2. Analysera API-filer för kontakter/objekt.
+3. Granska UI-sidor (kontakter, nytt, etc.).
+4. Implementera sök/filter/sortering.
+5. Lägg till pagination.
+6. Förbättra säkerhet (RLS, auth).
+7. Optimera prestanda (index, caching).
+8. Förbättra UX (states, accessibility).
+9. Lägg till nya features (bulk, export).
+10. Testning och deploy. 

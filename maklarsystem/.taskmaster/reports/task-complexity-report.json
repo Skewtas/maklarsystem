@@ -1,0 +1,133 @@
+{
+	"meta": {
+		"generatedAt": "2025-07-29T14:19:06.995Z",
+		"tasksAnalyzed": 15,
+		"totalTasks": 15,
+		"analysisCount": 15,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Project Environment & Dependency Upgrade",
+			"complexityScore": 6,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Break down the environment and dependency upgrade into: (1) Next.js upgrade (App Router migration), (2) TypeScript upgrade and strict mode enforcement, (3) Tailwind CSS upgrade and config validation, (4) Supabase client upgrade and .env setup, (5) ESLint (airbnb-typescript) and Prettier configuration, (6) Husky pre-commit hook setup, (7) Full dependency audit and update. For each, specify migration steps, config changes, and validation checks.",
+			"reasoning": "This task involves multiple core upgrades (Next.js, TypeScript, Tailwind, Supabase), each with potential breaking changes and required config updates. Industry best practices recommend isolating each upgrade, validating compatibility, and enforcing code quality tools. The complexity is moderate due to the breadth of stack changes, need for strict type checking, and tooling integration, but does not involve deep business logic or custom features. Each upgrade/configuration step is best handled as a discrete subtask for traceability and rollback."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Supabase Integration & Authentication",
+			"complexityScore": 9,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "Expand Supabase integration into: (1) Supabase client/environment setup, (2) Auth (email/password, OAuth) flows, (3) Data model mapping and migration, (4) Replace all mock data with Supabase queries, (5) Integrate React Query for data management, (6) Real-time subscriptions for all entities, (7) Supabase Storage integration (uploads/downloads), (8) Centralized error/loading state management, (9) API key security and RLS enforcement, (10) End-to-end integration testing. For each, define implementation, error handling, and test coverage.",
+			"reasoning": "This task is highly complex, requiring secure authentication, real-time data, file storage, and robust error handling across the app. It touches every data interaction, mandates security best practices (RLS, key management), and must ensure seamless migration from mock to live data. The breadth and depth of integration, plus the need for testable, maintainable code, justify a high complexity score and further subtask breakdown beyond the initial list."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Object Detail Page Implementation",
+			"complexityScore": 8,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Decompose the object detail page into: (1) Dynamic routing setup, (2) Tabbed interface implementation, (3) Editable forms with validation, (4) Image gallery with upload, (5) Document management (upload/list), (6) Bid tracking with real-time updates, (7) Viewing schedule CRUD/calendar, (8) Toasts and confirmation dialogs. For each, specify UI/UX, data flow, and integration points.",
+			"reasoning": "This page is feature-rich, combining dynamic routing, complex forms, real-time updates, file management, and interactive UI components. Each feature has distinct data and UI requirements, and best practices dictate modularizing for maintainability and testability. The complexity is high due to the integration of multiple advanced patterns and real-time features."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Projects Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Divide the projects page into: (1) Route and layout setup, (2) Project listing (Supabase query), (3) Project detail view, (4) Grouping related objects (Supabase join), (5) CRUD operations with toasts and confirmation dialogs. For each, define data flow, UI state, and error handling.",
+			"reasoning": "This is a standard CRUD page with some relational data grouping. While it requires careful data modeling and UI feedback, it does not involve complex business logic or real-time features. The complexity is moderate and aligns with typical entity management patterns."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Help Page Implementation",
+			"complexityScore": 3,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the help page into: (1) Route and layout, (2) Static markdown documentation (MDX) integration, (3) FAQ accordion implementation, (4) Support contact form with email API integration. For each, specify accessibility and responsive design requirements.",
+			"reasoning": "This task is low complexity, involving mostly static content, simple UI components, and a basic form integration. Accessibility and responsiveness are important but standard. Few edge cases or advanced patterns are required."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Global Search & Advanced Filtering",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Expand global search into: (1) Search bar/header integration with debounced input, (2) Supabase full-text search queries, (3) Quick filters (entity, date, etc.), (4) Advanced search modal (multi-field), (5) Search history storage (localStorage/Supabase), (6) Keyboard shortcuts (cmd+k), (7) Error/loading state management. For each, define UX, data flow, and performance considerations.",
+			"reasoning": "Implementing performant, user-friendly global search with advanced filtering and history is complex. It requires efficient querying, state management, and seamless UX across entities. Keyboard shortcuts and error handling add to the intricacy. Best practices recommend modularizing each search/filtering aspect."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Contact Detail Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on contact detail page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "New Object/Contact/Calendar Event Creation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on new object/contact/calendar event creation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Organizations Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on organizations page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "CRM Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on crm page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Calendar Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on calendar page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Tasks Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on tasks page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Reports/BI Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on reports/bi page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Settings Page Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on settings page implementation.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Notifications & Responsive Design Enhancements",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down this task with a focus on notifications & responsive design enhancements.",
+			"reasoning": "Automatically added due to missing analysis in AI response."
+		}
+	]
+}

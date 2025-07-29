@@ -1,0 +1,22 @@
+{
+  "name": "maklarsystem-workspace",
+  "version": "1.0.0",
+  "description": "Real estate management system workspace",
+  "scripts": {
+    "dev": "cd maklarsystem && npm run dev",
+    "build": "cd maklarsystem && npm run build",
+    "start": "cd maklarsystem && npm start",
+    "install": "cd maklarsystem && npm install"
+  },
+  "private": true,
+  "dependencies": {
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.53.0",
+    "next": "^15.4.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  }
+}
