@@ -559,5 +559,13 @@
       "updated": "2025-07-29T10:41:58.748Z",
       "description": "Tasks for master context"
     }
+  },
+  "auth-restoration": {
+    "tasks": [],
+    "metadata": {
+      "created": "2025-07-29T20:15:55.164Z",
+      "updated": "2025-07-29T20:15:55.164Z",
+      "description": "Återställning av autentiseringsfunktionalitet från CRITICAL FIX - migration från Supabase Auth Helpers till NextAuth v5"
+    }
   }
 }

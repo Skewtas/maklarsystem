@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { ArrowLeft, Save, Upload, MapPin, Home, DollarSign, Users, FileText, Camera, Building, ChevronDown } from 'lucide-react'
@@ -25,10 +25,58 @@ const FloatingElements = () => (
   </div>
 )
 
+// Sticky Sidebar Navigation Component
+const StickyNavigation = ({ activeSection, onSectionClick }: { activeSection: string; onSectionClick: (section: string) => void }) => {
+  const sections = [
+    { id: 'oversikt', label: 'ÖVERSIKT', icon: '📋' },
+    { id: 'beskrivningar', label: 'BESKRIVNINGAR', icon: '📝' },
+    { id: 'spekulanter', label: 'SPEKULANTER', icon: '👥' },
+    { id: 'dokument', label: 'DOKUMENT', icon: '📄' },
+    { id: 'parter', label: 'PARTER', icon: '🤝' },
+    { id: 'affaren', label: 'AFFÄREN', icon: '💼' },
+    { id: 'bilder', label: 'BILDER', icon: '📷' },
+    { id: 'foreningen', label: 'FÖRENINGEN', icon: '🏢' },
+    { id: 'marknadsföring', label: 'MARKNADSFÖRING', icon: '📢' },
+    { id: 'tjänster', label: 'TJÄNSTER', icon: '⚙️' },
+    { id: 'lån-och-pant', label: 'LÅN OCH PANT', icon: '🏦' },
+    { id: 'att-göra', label: 'ATT GÖRA', icon: '✅' }
+  ]
+
+  return (
+    <div className="w-72 flex-shrink-0">
+      <div className="fixed top-6 w-72 h-screen overflow-y-auto z-40">
+        <div className="backdrop-blur-xl bg-white/30 border border-white/20 rounded-2xl shadow-lg p-4 max-h-[calc(100vh-3rem)]">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Navigering</h3>
+          <div className="space-y-2 overflow-y-auto">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => onSectionClick(section.id)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-left ${
+                  activeSection === section.id
+                    ? 'bg-blue-500/20 text-blue-700 border border-blue-300/30'
+                    : 'hover:bg-white/20 text-gray-700'
+                }`}
+              >
+                <span className="text-xl">{section.icon}</span>
+                <span className="text-sm font-medium">{section.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function NyttObjektPage() {
   const router = useRouter()
   const createObjekt = useCreateObjekt()
   const { data: kontakter = [] } = useKontakter()
+  const [activeSection, setActiveSection] = useState('oversikt')
+  
+  // Section refs for smooth scrolling
+  const sectionRefs = useRef<{[key: string]: HTMLDivElement | null}>({})
   
   const [formData, setFormData] = useState({
     // Grundläggande information
@@ -197,6 +245,40 @@ export default function NyttObjektPage() {
     specialbestammelser: '',
     anmarkningar: ''
   })
+
+  // Handle smooth scrolling to sections
+  const handleSectionClick = (sectionId: string) => {
+    setActiveSection(sectionId)
+    const element = sectionRefs.current[sectionId]
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }
+
+  // Track active section while scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = Object.keys(sectionRefs.current)
+      const scrollPosition = window.scrollY + 200 // Offset for sticky nav
+
+      for (const sectionId of sections) {
+        const element = sectionRefs.current[sectionId]
+        if (element) {
+          const { offsetTop, offsetHeight } = element
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(sectionId)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -388,9 +470,9 @@ export default function NyttObjektPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-green-100 relative overflow-hidden -m-6 p-6">
         <FloatingElements />
         
-        <div className="relative z-10 space-y-6 max-w-4xl mx-auto">
+        <div className="relative z-10 max-w-7xl mx-auto">
           {/* Header */}
-          <GlassCard className="p-6">
+          <GlassCard className="p-6 mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Link href="/objekt" className="p-2 hover:bg-white/20 rounded-xl transition-all">
@@ -404,8 +486,16 @@ export default function NyttObjektPage() {
             </div>
           </GlassCard>
 
+          {/* Main Layout with Sidebar and Content */}
+          <div className="flex gap-4">
+            {/* Sticky Navigation Sidebar */}
+            <StickyNavigation activeSection={activeSection} onSectionClick={handleSectionClick} />
+
+            {/* Main Content */}
+            <div className="flex-1 ml-72">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Grundläggande information */}
+            {/* Översikt (Grundläggande information + Adress) */}
+            <div ref={(el) => { sectionRefs.current['oversikt'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -530,7 +620,7 @@ export default function NyttObjektPage() {
             </GlassCard>
 
             {/* Adressinformation */}
-            <GlassCard className="p-6">
+              <GlassCard className="p-6 mt-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-white" />
@@ -595,8 +685,98 @@ export default function NyttObjektPage() {
                 </div>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Prissättning och budgivning */}
+            {/* BESKRIVNINGAR */}
+            <div ref={(el) => { sectionRefs.current['beskrivningar'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Beskrivningar</h2>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Objektbeskrivning</label>
+                    <textarea
+                      value={formData.beskrivning || ''}
+                      onChange={(e) => setFormData({...formData, beskrivning: e.target.value})}
+                      rows={4}
+                      className="w-full backdrop-blur-xl bg-white/30 border border-white/40 px-4 py-3 rounded-2xl resize-none"
+                      placeholder="Beskriv objektet..."
+                    />
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* SPEKULANTER */}
+            <div ref={(el) => { sectionRefs.current['spekulanter'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Spekulanter</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Hantering av spekulanter kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* DOKUMENT */}
+            <div ref={(el) => { sectionRefs.current['dokument'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Dokument</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Planritning URL</label>
+                    <input
+                      type="url"
+                      value={formData.planritning_url || ''}
+                      onChange={(e) => setFormData({...formData, planritning_url: e.target.value})}
+                      className="w-full backdrop-blur-xl bg-white/30 border border-white/40 px-4 py-3 rounded-2xl"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Energideklaration URL</label>
+                    <input
+                      type="url"
+                      value={formData.energideklaration_url || ''}
+                      onChange={(e) => setFormData({...formData, energideklaration_url: e.target.value})}
+                      className="w-full backdrop-blur-xl bg-white/30 border border-white/40 px-4 py-3 rounded-2xl"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* PARTER */}
+            <div ref={(el) => { sectionRefs.current['parter'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Parter</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Hantering av parter (säljare, köpare, etc.) kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* AFFÄREN - Prissättning och ekonomi */}
+            <div ref={(el) => { sectionRefs.current['affaren'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
@@ -697,139 +877,211 @@ export default function NyttObjektPage() {
               </div>
             </GlassCard>
 
-            {/* Storlek och layout */}
-            <GlassCard className="p-6">
+              {/* Månadsavgifter och kostnader */}
+              <GlassCard className="p-6 mt-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
-                  <Home className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Storlek och layout</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">Månadsavgifter och kostnader</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Boarea (m²)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Månadsavgift (kr)</label>
                   <input
                     type="number"
-                    value={formData.boarea}
-                    onChange={(e) => setFormData({...formData, boarea: e.target.value})}
+                      value={formData.manadsavgift}
+                      onChange={(e) => setFormData({...formData, manadsavgift: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Biarea (m²)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kapitaltillskott (kr)</label>
                   <input
                     type="number"
-                    value={formData.biarea}
-                    onChange={(e) => setFormData({...formData, biarea: e.target.value})}
+                      value={formData.kapitaltillskott}
+                      onChange={(e) => setFormData({...formData, kapitaltillskott: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tomtarea (m²)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Energikostnad/år (kr)</label>
                   <input
                     type="number"
-                    value={formData.tomtarea}
-                    onChange={(e) => setFormData({...formData, tomtarea: e.target.value})}
+                      value={formData.energikostnad_per_ar}
+                      onChange={(e) => setFormData({...formData, energikostnad_per_ar: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Källararea (m²)</label>
-                  <input
-                    type="number"
-                    value={formData.kallare_area}
-                    onChange={(e) => setFormData({...formData, kallare_area: e.target.value})}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="md:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Vad innefattar avgiften</label>
+                    <textarea
+                      value={formData.avgift_innefattar}
+                      onChange={(e) => setFormData({...formData, avgift_innefattar: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="T.ex. Värme, vatten, el, bredband, kabel-TV, sophämtning..."
+                    />
+                  </div>
+                </div>
+              </GlassCard>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Garagearea (m²)</label>
-                  <input
-                    type="number"
-                    value={formData.garage_area}
-                    onChange={(e) => setFormData({...formData, garage_area: e.target.value})}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+            {/* LÅN OCH PANT - Ekonomi och drift */}
+            <div ref={(el) => { sectionRefs.current['lån-och-pant'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Ekonomi och drift</h2>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Byggår</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Driftkostnad (kr/år)</label>
                   <input
                     type="number"
-                    value={formData.byggaar}
-                    onChange={(e) => setFormData({...formData, byggaar: e.target.value})}
+                      value={formData.driftkostnad}
+                      onChange={(e) => setFormData({...formData, driftkostnad: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Antal rum</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Avgift (kr/månad)</label>
                   <input
                     type="number"
-                    value={formData.rum}
-                    onChange={(e) => setFormData({...formData, rum: e.target.value})}
+                      value={formData.avgift}
+                      onChange={(e) => setFormData({...formData, avgift: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Antal sovrum</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pantbrev (kr)</label>
                   <input
                     type="number"
-                    value={formData.antal_sovrum}
-                    onChange={(e) => setFormData({...formData, antal_sovrum: e.target.value})}
+                      value={formData.pantbrev}
+                      onChange={(e) => setFormData({...formData, pantbrev: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Antal WC</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Taxeringsvärde (kr)</label>
                   <input
                     type="number"
-                    value={formData.antal_wc}
-                    onChange={(e) => setFormData({...formData, antal_wc: e.target.value})}
+                      value={formData.taxeringsvarde}
+                      onChange={(e) => setFormData({...formData, taxeringsvarde: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Våning</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kommunala avgifter (kr/år)</label>
                   <input
                     type="number"
-                    value={formData.vaning}
-                    onChange={(e) => setFormData({...formData, vaning: e.target.value})}
+                      value={formData.kommunala_avgifter}
+                      onChange={(e) => setFormData({...formData, kommunala_avgifter: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Antal våningar hus</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Försäkringskostnad (kr/år)</label>
                   <input
                     type="number"
-                    value={formData.antal_vaningar_hus}
-                    onChange={(e) => setFormData({...formData, antal_vaningar_hus: e.target.value})}
+                      value={formData.forsakringskostnad}
+                      onChange={(e) => setFormData({...formData, forsakringskostnad: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  </div>
+                </div>
+              </GlassCard>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Köksstorlek (m²)</label>
-                  <input
-                    type="number"
-                    value={formData.koksstorlek}
-                    onChange={(e) => setFormData({...formData, koksstorlek: e.target.value})}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+            {/* BILDER */}
+            <div ref={(el) => { sectionRefs.current['bilder'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center">
+                    <Camera className="w-5 h-5 text-white" />
                 </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Bilder</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Bildhantering kommer här...</p>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Personer */}
+            {/* FÖRENINGEN */}
+            <div ref={(el) => { sectionRefs.current['foreningen'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <Building className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Föreningen</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Information om föreningen kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* MARKNADSFÖRING */}
+            <div ref={(el) => { sectionRefs.current['marknadsföring'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <Upload className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Marknadsföring</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Marknadsföringsaktiviteter kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* TJÄNSTER */}
+            <div ref={(el) => { sectionRefs.current['tjänster'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Tjänster</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Tillhörande tjänster kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* ATT GÖRA */}
+            <div ref={(el) => { sectionRefs.current['att-göra'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Att göra</h2>
+                </div>
+                <div className="text-gray-600">
+                  <p>Uppgifter och checklist kommer här...</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* PARTER - Personer */}
+            <div ref={(el) => { sectionRefs.current['parter'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
@@ -862,126 +1114,151 @@ export default function NyttObjektPage() {
                 </Select.Root>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Månadsavgifter och kostnader */}
+            {/* SPEKULANTER - Placeholder för framtida funktionalitet */}
+            <div ref={(el) => { sectionRefs.current['spekulanter'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Månadsavgifter och kostnader</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">Spekulanter</h2>
+                </div>
+                
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Funktionalitet för hantering av spekulanter kommer att läggas till här.</p>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* TJÄNSTER - Storlek och layout */}
+            <div ref={(el) => { sectionRefs.current['tjänster'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                    <Home className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Storlek och layout</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Månadsavgift (kr)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Boarea (m²)</label>
                   <input
                     type="number"
-                    value={formData.manadsavgift}
-                    onChange={(e) => setFormData({...formData, manadsavgift: e.target.value})}
+                      value={formData.boarea}
+                      onChange={(e) => setFormData({...formData, boarea: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Kapitaltillskott (kr)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Biarea (m²)</label>
                   <input
                     type="number"
-                    value={formData.kapitaltillskott}
-                    onChange={(e) => setFormData({...formData, kapitaltillskott: e.target.value})}
+                      value={formData.biarea}
+                      onChange={(e) => setFormData({...formData, biarea: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Energikostnad/år (kr)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tomtarea (m²)</label>
                   <input
                     type="number"
-                    value={formData.energikostnad_per_ar}
-                    onChange={(e) => setFormData({...formData, energikostnad_per_ar: e.target.value})}
+                      value={formData.tomtarea}
+                      onChange={(e) => setFormData({...formData, tomtarea: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                <div className="md:col-span-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Vad innefattar avgiften</label>
-                  <textarea
-                    value={formData.avgift_innefattar}
-                    onChange={(e) => setFormData({...formData, avgift_innefattar: e.target.value})}
-                    rows={3}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="T.ex. Värme, vatten, el, bredband, kabel-TV, sophämtning..."
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Källararea (m²)</label>
+                    <input
+                      type="number"
+                      value={formData.kallare_area}
+                      onChange={(e) => setFormData({...formData, kallare_area: e.target.value})}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Garagearea (m²)</label>
+                    <input
+                      type="number"
+                      value={formData.garage_area}
+                      onChange={(e) => setFormData({...formData, garage_area: e.target.value})}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
               </div>
-            </GlassCard>
 
-            {/* Ekonomi och drift */}
-            <GlassCard className="p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-800">Ekonomi och drift</h2>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Byggår</label>
+                    <input
+                      type="number"
+                      value={formData.byggaar}
+                      onChange={(e) => setFormData({...formData, byggaar: e.target.value})}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Driftkostnad (kr/år)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Antal rum</label>
                   <input
                     type="number"
-                    value={formData.driftkostnad}
-                    onChange={(e) => setFormData({...formData, driftkostnad: e.target.value})}
+                      value={formData.rum}
+                      onChange={(e) => setFormData({...formData, rum: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Avgift (kr/månad)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Antal sovrum</label>
                   <input
                     type="number"
-                    value={formData.avgift}
-                    onChange={(e) => setFormData({...formData, avgift: e.target.value})}
+                      value={formData.antal_sovrum}
+                      onChange={(e) => setFormData({...formData, antal_sovrum: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Pantbrev (kr)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Antal WC</label>
                   <input
                     type="number"
-                    value={formData.pantbrev}
-                    onChange={(e) => setFormData({...formData, pantbrev: e.target.value})}
+                      value={formData.antal_wc}
+                      onChange={(e) => setFormData({...formData, antal_wc: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Taxeringsvärde (kr)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Våning</label>
                   <input
                     type="number"
-                    value={formData.taxeringsvarde}
-                    onChange={(e) => setFormData({...formData, taxeringsvarde: e.target.value})}
+                      value={formData.vaning}
+                      onChange={(e) => setFormData({...formData, vaning: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Kommunala avgifter (kr/år)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Antal våningar hus</label>
                   <input
                     type="number"
-                    value={formData.kommunala_avgifter}
-                    onChange={(e) => setFormData({...formData, kommunala_avgifter: e.target.value})}
+                      value={formData.antal_vaningar_hus}
+                      onChange={(e) => setFormData({...formData, antal_vaningar_hus: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Försäkringskostnad (kr/år)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Köksstorlek (m²)</label>
                   <input
                     type="number"
-                    value={formData.forsakringskostnad}
-                    onChange={(e) => setFormData({...formData, forsakringskostnad: e.target.value})}
+                      value={formData.koksstorlek}
+                      onChange={(e) => setFormData({...formData, koksstorlek: e.target.value})}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -989,7 +1266,7 @@ export default function NyttObjektPage() {
             </GlassCard>
 
             {/* Energicertifiering */}
-            <GlassCard className="p-6">
+              <GlassCard className="p-6 mt-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
                   <Building className="w-5 h-5 text-white" />
@@ -1089,7 +1366,7 @@ export default function NyttObjektPage() {
             </GlassCard>
 
             {/* Tekniska detaljer */}
-            <GlassCard className="p-6">
+              <GlassCard className="p-6 mt-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Building className="w-5 h-5 text-white" />
@@ -1190,64 +1467,102 @@ export default function NyttObjektPage() {
                 </div>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Juridiska aspekter */}
+            {/* BESKRIVNINGAR */}
+            <div ref={(el) => { sectionRefs.current['beskrivningar'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <FileText className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Juridiska aspekter</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">Beskrivningar och marknadsföring</h2>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Servitut</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Allmän beskrivning</label>
                   <textarea
-                    value={formData.servitut}
-                    onChange={(e) => setFormData({...formData, servitut: e.target.value})}
-                    rows={3}
+                      value={formData.beskrivning}
+                      onChange={(e) => setFormData({...formData, beskrivning: e.target.value})}
+                      rows={4}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Beskriv eventuella servitut..."
+                      placeholder="Allmän beskrivning av objektet..."
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Inskränkningar</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Mäklartext</label>
                   <textarea
-                    value={formData.inskrankning}
-                    onChange={(e) => setFormData({...formData, inskrankning: e.target.value})}
-                    rows={3}
+                      value={formData.maklartext}
+                      onChange={(e) => setFormData({...formData, maklartext: e.target.value})}
+                      rows={4}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Beskriv eventuella inskränkningar..."
+                      placeholder="Professionell beskrivning för marknadsföring..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Belastningar</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Säljtext</label>
                   <textarea
-                    value={formData.belastningar}
-                    onChange={(e) => setFormData({...formData, belastningar: e.target.value})}
+                      value={formData.salutext}
+                      onChange={(e) => setFormData({...formData, salutext: e.target.value})}
                     rows={3}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Beskriv eventuella belastningar..."
+                      placeholder="Säljarens egen beskrivning..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gemensamhetsanläggning</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Marknadsföringstext</label>
                   <textarea
-                    value={formData.gemensamhetsanlaggning}
-                    onChange={(e) => setFormData({...formData, gemensamhetsanlaggning: e.target.value})}
+                      value={formData.marknadsforingstext}
+                      onChange={(e) => setFormData({...formData, marknadsforingstext: e.target.value})}
                     rows={3}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Beskriv andel i gemensamhetsanläggning..."
+                      placeholder="Text för marknadsföring och annonser..."
                   />
                 </div>
               </div>
             </GlassCard>
 
-            {/* Visning och marknadsföring */}
+              {/* Tillbehör och ingående */}
+              <GlassCard className="p-6 mt-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Tillbehör och ingående</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tillbehör som ingår</label>
+                    <textarea
+                      value={formData.tillbehor_som_ingaar}
+                      onChange={(e) => setFormData({...formData, tillbehor_som_ingaar: e.target.value})}
+                      rows={4}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="Lista vad som ingår i försäljningen..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tillbehör som ej ingår</label>
+                    <textarea
+                      value={formData.tillbehor_som_ej_ingaar}
+                      onChange={(e) => setFormData({...formData, tillbehor_som_ej_ingaar: e.target.value})}
+                      rows={4}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="Lista vad som ej ingår i försäljningen..."
+                    />
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* MARKNADSFÖRING - Visning och marknadsföring */}
+            <div ref={(el) => { sectionRefs.current['marknadsföring'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
@@ -1334,7 +1649,7 @@ export default function NyttObjektPage() {
             </GlassCard>
 
             {/* Område och tillgänglighet */}
-            <GlassCard className="p-6">
+              <GlassCard className="p-6 mt-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-white" />
@@ -1376,127 +1691,108 @@ export default function NyttObjektPage() {
                 </div>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Beskrivningar och marknadsföring */}
+            {/* DOKUMENT - Dokument och media */}
+            <div ref={(el) => { sectionRefs.current['dokument'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <Camera className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Beskrivningar och marknadsföring</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">Dokument och media</h2>
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Allmän beskrivning</label>
-                  <textarea
-                    value={formData.beskrivning}
-                    onChange={(e) => setFormData({...formData, beskrivning: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Allmän beskrivning av objektet..."
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Planritning URL</label>
+                    <input
+                      type="url"
+                      value={formData.planritning_url}
+                      onChange={(e) => setFormData({...formData, planritning_url: e.target.value})}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mäklartext</label>
-                  <textarea
-                    value={formData.maklartext}
-                    onChange={(e) => setFormData({...formData, maklartext: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Professionell beskrivning för marknadsföring..."
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Byggnadsbeskrivning URL</label>
+                    <input
+                      type="url"
+                      value={formData.byggnadsbeskrivning_url}
+                      onChange={(e) => setFormData({...formData, byggnadsbeskrivning_url: e.target.value})}
+                      className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://..."
                   />
                 </div>
+                </div>
+              </GlassCard>
 
+              {/* Juridiska aspekter */}
+              <GlassCard className="p-6 mt-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Juridiska aspekter</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Säljtext</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Servitut</label>
                   <textarea
-                    value={formData.salutext}
-                    onChange={(e) => setFormData({...formData, salutext: e.target.value})}
+                      value={formData.servitut}
+                      onChange={(e) => setFormData({...formData, servitut: e.target.value})}
                     rows={3}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Säljarens egen beskrivning..."
+                      placeholder="Beskriv eventuella servitut..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Marknadsföringstext</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Inskränkningar</label>
                   <textarea
-                    value={formData.marknadsforingstext}
-                    onChange={(e) => setFormData({...formData, marknadsforingstext: e.target.value})}
+                      value={formData.inskrankning}
+                      onChange={(e) => setFormData({...formData, inskrankning: e.target.value})}
                     rows={3}
                     className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Text för marknadsföring och annonser..."
+                      placeholder="Beskriv eventuella inskränkningar..."
+                  />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Belastningar</label>
+                  <textarea
+                      value={formData.belastningar}
+                      onChange={(e) => setFormData({...formData, belastningar: e.target.value})}
+                      rows={3}
+                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="Beskriv eventuella belastningar..."
+                  />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Gemensamhetsanläggning</label>
+                  <textarea
+                      value={formData.gemensamhetsanlaggning}
+                      onChange={(e) => setFormData({...formData, gemensamhetsanlaggning: e.target.value})}
+                      rows={3}
+                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="Beskriv andel i gemensamhetsanläggning..."
                   />
                 </div>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Tillbehör och ingående */}
+            {/* BILDER - Bildhantering */}
+            <div ref={(el) => { sectionRefs.current['bilder'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-800">Tillbehör och ingående</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tillbehör som ingår</label>
-                  <textarea
-                    value={formData.tillbehor_som_ingaar}
-                    onChange={(e) => setFormData({...formData, tillbehor_som_ingaar: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Lista vad som ingår i försäljningen..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tillbehör som ej ingår</label>
-                  <textarea
-                    value={formData.tillbehor_som_ej_ingaar}
-                    onChange={(e) => setFormData({...formData, tillbehor_som_ej_ingaar: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Lista vad som ej ingår i försäljningen..."
-                  />
-                </div>
-              </div>
-            </GlassCard>
-
-            {/* Dokument och media */}
-            <GlassCard className="p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <Camera className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Dokument och media</h2>
-              </div>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Planritning URL</label>
-                  <input
-                    type="url"
-                    value={formData.planritning_url}
-                    onChange={(e) => setFormData({...formData, planritning_url: e.target.value})}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Byggnadsbeskrivning URL</label>
-                  <input
-                    type="url"
-                    value={formData.byggnadsbeskrivning_url}
-                    onChange={(e) => setFormData({...formData, byggnadsbeskrivning_url: e.target.value})}
-                    className="w-full px-4 py-3 backdrop-blur-xl bg-white/30 border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://..."
-                  />
+                  <h2 className="text-xl font-semibold text-gray-800">Bilder och media</h2>
                 </div>
 
                 <div className="border-2 border-dashed border-white/40 rounded-2xl p-8 text-center">
@@ -1507,10 +1803,27 @@ export default function NyttObjektPage() {
                     Välj filer
                   </button>
                 </div>
+              </GlassCard>
+            </div>
+
+            {/* FÖRENINGEN - Placeholder för framtida funktionalitet */}
+            <div ref={(el) => { sectionRefs.current['foreningen'] = el }}>
+              <GlassCard className="p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+                    <Building className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800">Föreningen</h2>
+                </div>
+                
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Funktionalitet för föreningshantering kommer att läggas till här.</p>
               </div>
             </GlassCard>
+            </div>
 
-            {/* Övrigt och anmärkningar */}
+            {/* ATT GÖRA - Övrigt och anmärkningar */}
+            <div ref={(el) => { sectionRefs.current['att-göra'] = el }}>
             <GlassCard className="p-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-slate-600 rounded-xl flex items-center justify-center">
@@ -1543,6 +1856,7 @@ export default function NyttObjektPage() {
                 </div>
               </div>
             </GlassCard>
+            </div>
 
             {/* Actions */}
             <div className="flex justify-end space-x-4">
@@ -1559,6 +1873,8 @@ export default function NyttObjektPage() {
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>

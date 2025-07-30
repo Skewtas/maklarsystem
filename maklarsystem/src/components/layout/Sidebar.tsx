@@ -57,14 +57,13 @@ export default function Sidebar({ isOpen, isPinned = false }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'bg-slate-900 text-white transition-all duration-300 flex flex-col',
-        'fixed left-0 top-0 bottom-0 z-40 border-r border-slate-800',
-        'lg:static lg:translate-x-0',
-        // Mobile states
+        'bg-slate-900 text-white transition-all duration-300 flex flex-col border-r border-slate-800',
+        // Mobile states - keep fixed positioning
+        'fixed left-0 top-0 bottom-0 z-40 lg:relative lg:z-auto',
         isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64',
-        // Desktop states  
-        'lg:w-64 lg:min-w-[256px]',
-        !isOpen && 'lg:w-16 lg:min-w-[64px]'
+        // Desktop states - use relative positioning in flex layout
+        'lg:translate-x-0',
+        isOpen ? 'lg:w-64 lg:min-w-[256px]' : 'lg:w-16 lg:min-w-[64px]'
       )}
     >
       {/* Sidebar Header - only show when expanded */}

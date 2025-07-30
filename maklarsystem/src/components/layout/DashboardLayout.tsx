@@ -14,16 +14,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Since auth is disabled, always show the dashboard
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex">
       <Sidebar isOpen={sidebarOpen} />
       
-      <div className={cn(
-        "transition-all duration-300 ease-in-out",
-        sidebarOpen ? "lg:ml-64" : "lg:ml-20"
-      )}>
+      <div className="relative flex-1 flex flex-col">
         <Navigation onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="p-6">
+        <main className="flex-1">
           {children}
         </main>
       </div>

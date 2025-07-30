@@ -1,10 +1,13 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
-import type { User } from '@supabase/auth-helpers-nextjs'
+import { createContext, useContext, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/utils/supabase/client'
+import type { User, Session } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 interface SupabaseContext {
-  supabase: any // Disabled
+  supabase: SupabaseClient
   user: User | null
   loading: boolean
 }
@@ -16,14 +19,37 @@ export function SupabaseProvider({
   session
 }: { 
   children: React.ReactNode
-  session: any
+  session: Session | null
 }) {
-  // Since auth is disabled, just return static values
-  const [user] = useState<User | null>(null)
-  const [loading] = useState(false)
+  const [user, setUser] = useState<User | null>(session?.user || null)
+  const [loading, setLoading] = useState(!session)
+  const router = useRouter()
 
-  // No Supabase client creation to avoid cookie errors
-  const supabase = null
+  // Create Supabase client
+  const supabase = createClient()
+
+  useEffect(() => {
+    // Set initial user from session
+    setUser(session?.user || null)
+    setLoading(false)
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user || null)
+        setLoading(false)
+        
+        // Navigate appropriately based on auth state
+        if (event === 'SIGNED_IN') {
+          router.push('/')
+        } else if (event === 'SIGNED_OUT') {
+          router.push('/login')
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [supabase, session, router])
 
   return (
     <Context.Provider value={{ supabase, user, loading }}>

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SupabaseProvider } from "@/lib/supabase-provider";
 import { QueryProvider } from "@/lib/query-provider";
+import { SupabaseProvider } from "@/lib/supabase-provider";
+import { createClient } from "@/utils/supabase/server";
+
 import { Toaster } from "@/components/ui/toaster";
-// Removed Supabase imports since auth is disabled
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,8 +19,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Since authentication is disabled, pass null session
-  const session = null;
+  const supabase = await createClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
   return (
     <html lang="sv">

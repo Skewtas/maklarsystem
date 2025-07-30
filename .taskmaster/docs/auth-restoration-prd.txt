@@ -1,0 +1,155 @@
+<context>
+# Overview
+Mäklarsystemet har för närvarande avstängd autentisering på grund av kompatibilitetsproblem mellan Next.js 15 och Supabase Auth Helpers som orsakade systemkrasch (vit sida). Nu ska vi återställa full autentiseringsfunktionalitet genom att migrera till en Next.js 15-kompatibel auth-lösning.
+
+Det befintliga systemet är fullt funktionellt med:
+- Supabase databas med user-tabeller och test data
+- Komplett UI för inloggning/registrering  
+- Dashboard och funktionalitet som väntar på auth
+- Rollbaserat system (Admin, Agent, Coordinator, Assistant)
+
+# Core Features
+1. **Fullständig autentisering**
+   - Säker registrering av nya användare
+   - Inloggning med email/lösenord
+   - Lösenordsåterställning
+   - Session-hantering
+
+2. **Rollbaserad åtkomstkontroll**
+   - 4 roller: Admin, Agent, Coordinator, Assistant  
+   - Olika behörigheter per roll
+   - Dynamisk navigation baserat på roll
+
+3. **Middleware skydd**
+   - Skydda alla /dashboard routes
+   - Redirect till login vid obehörig åtkomst
+   - Session validering
+
+4. **Användardata integration**
+   - Koppla autentiserade användare till befintlig databas
+   - Personaliserad dashboard baserat på användarprofil
+   - Säker dataåtkomst
+
+# User Experience
+**Användare:** Mäklare som behöver säker tillgång till systemet
+
+**Kritiska flöden:**
+- Registrering → Email bekräftelse → Första inloggning → Dashboard
+- Inloggning → Dashboard med rollspecifik navigation
+- Glömt lösenord → Reset email → Nytt lösenord → Inloggning
+
+**UI/UX krav:**
+- Befintlig glassmorphism design ska behållas
+- Smidig övergång från login till dashboard
+- Tydliga felmeddelanden på svenska
+- Loading states under auth-operationer
+</context>
+
+<PRD>
+# Technical Architecture
+
+## Auth Provider Selection
+- **Primär kandidat:** Auth.js (NextAuth.js) v5 - fullständigt Next.js 15 kompatibel
+- **Backup:** Clerk - om NextAuth integration blir komplex
+- **Krav:** Måste fungera med befintlig Supabase databas
+
+## System Components
+1. **Auth Provider Setup**
+   - NextAuth v5 konfiguration med Supabase adapter
+   - Session management kompatibel med Next.js 15
+   - Environment variabler för auth secrets
+
+2. **Database Integration**  
+   - Använd befintlig Supabase users tabella
+   - Skapa NextAuth-kompatibla session/account tabeller vid behov
+   - Bevara befintlig test user: Anna Andersson
+
+3. **Middleware Protection**
+   - Skydda alla /dashboard/* routes
+   - Skydda /api/* endpoints
+   - Redirect logik för obehöriga användare
+
+4. **Frontend Integration**
+   - Uppdatera useSupabase till useAuth
+   - Session provider wrapper
+   - Auth status checks i komponenter
+
+# Development Roadmap
+
+## Fas 1: Auth Provider Setup (MVP)
+- Installera och konfigurera NextAuth v5
+- Skapa grundläggande auth konfiguration
+- Testa att systemet inte kraschar
+
+## Fas 2: Database Integration  
+- Konfigurera Supabase adapter för NextAuth
+- Migrera/mappa befintlig user data
+- Säkerställ att Anna Andersson test user fungerar
+
+## Fas 3: Login/Registration Återställning
+- Uppdatera login page för NextAuth
+- Aktivera registreringsfunktionalitet  
+- Implementera lösenordsåterställning
+
+## Fas 4: Session Management
+- Implementera session provider
+- Uppdatera alla komponenter som använder auth
+- Ta bort alla null-checks för disabled auth
+
+## Fas 5: Middleware Protection
+- Aktivera route protection
+- Implementera redirect logik
+- Testa skyddade routes
+
+## Fas 6: Role-Based Access
+- Implementera rollbaserat system
+- Dynamisk navigation per roll
+- Behörighetskontroller
+
+# Logical Dependency Chain
+
+1. **Foundation:** NextAuth setup och grundkonfiguration (måste fungera utan krasch)
+2. **Database:** Supabase integration (behöver fungerande auth provider)  
+3. **Auth UI:** Login/registration forms (behöver database connection)
+4. **Session:** Provider och state management (behöver fungerande login)
+5. **Protection:** Middleware och route guards (behöver session management)
+6. **Roles:** Rollbaserat system (behöver fullständig auth infrastructure)
+
+# Risks and Mitigations
+
+## Kritiska risker:
+1. **Systemkrasch risk:** Next.js 15 kompatibilitetsproblem
+   - **Mitigation:** Testa varje steg noggrant, ha rollback plan
+   - **Test:** Verifiera att inga cookie errors uppstår
+
+2. **Data loss:** Förlora befintlig user/test data
+   - **Mitigation:** Backup databas innan migration
+   - **Test:** Verifiera Anna Andersson account efter varje steg
+
+3. **Session breaking:** Existerande sessions slutar fungera
+   - **Mitigation:** Implementera graceful degradation
+   - **Test:** Testa både nya och gamla session states
+
+## Tekniska utmaningar:
+- NextAuth v5 är relativt ny - dokumentation kan vara begränsad
+- Supabase adapter compatibility med NextAuth v5
+- Migration av befintlig auth state
+
+# Appendix
+
+## Befintlig arkitektur som ska bevaras:
+- Supabase databas (exreuewsrgavzsbdnghv.supabase.co)
+- User tabeller och roller
+- Test data inklusive Anna Andersson
+- Dashboard funktionalitet
+- Glassmorphism UI design
+
+## NextAuth v5 referens:
+- Officiell migration guide från v4 till v5
+- Next.js 15 kompatibilitet dokumentation
+- Supabase adapter setup guide
+
+## Rollback plan:
+- Om någon fas orsakar krasch, återgå till NEXT_JS_15_AUTH_FIX status
+- Behåll NEXT_JS_15_AUTH_FIX.md som referens
+- Ha git commits för varje fas för enkel rollback 

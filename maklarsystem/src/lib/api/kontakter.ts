@@ -25,8 +25,8 @@ export async function fetchKontakter(filters?: {
   if (filters?.typ && filters.typ !== 'alla') {
     query = query.eq('typ', filters.typ)
   }
-  if (filters?.search && filters.search.trim()) {
-    query = query.or(`fornamn.ilike.%${filters.search}%,efternamn.ilike.%${filters.search}%,foretag.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
+  if (filters?.search) {
+    query = query.or(`namn.ilike.%${filters.search}%, email.ilike.%${filters.search}%, telefon.ilike.%${filters.search}%`)
   }
 
   const { data, error } = await query

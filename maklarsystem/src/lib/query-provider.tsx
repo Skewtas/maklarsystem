@@ -10,21 +10,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 5 * 60 * 1000, // 5 minutes - for real estate data
-            gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
+            staleTime: 60 * 1000, // 1 minute
             refetchOnWindowFocus: false,
-            refetchOnReconnect: true,
-            retry: (failureCount, error: any) => {
-              // Don't retry 4xx errors except 408 (timeout)
-              if (error?.status >= 400 && error?.status < 500 && error?.status !== 408) {
-                return false
-              }
-              return failureCount < 3
-            },
-          },
-          mutations: {
-            retry: 1,
-            gcTime: 1000 * 60 * 5, // 5 minutes
           },
         },
       })

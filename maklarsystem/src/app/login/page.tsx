@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSupabase } from '@/lib/supabase-provider'
 import { toast } from 'sonner'
@@ -16,7 +16,14 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const { supabase } = useSupabase()
+  const { supabase, user } = useSupabase()
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/')
+    }
+  }, [user, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
