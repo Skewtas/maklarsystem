@@ -4,20 +4,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { User, LogOut, Settings, ChevronDown } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useSupabase } from '@/lib/supabase-provider'
+import { signOut } from '@/app/auth/actions'
 import { toast } from 'sonner'
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
-  const { supabase, user } = useSupabase()
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
+    try {
+      await signOut()
+    } catch (error) {
       toast.error('Kunde inte logga ut')
-    } else {
-      router.push('/login')
     }
   }
 
@@ -29,11 +27,9 @@ export default function UserMenu() {
           aria-label="User menu"
         >
           <User className="w-5 h-5" />
-          {user && (
-            <span className="text-sm hidden md:inline-block">
-              {user.email}
-            </span>
-          )}
+          <span className="text-sm hidden md:inline-block">
+            Profil
+          </span>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
       </DropdownMenu.Trigger>

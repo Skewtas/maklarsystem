@@ -39,12 +39,11 @@ export function SupabaseProvider({
         setUser(session?.user || null)
         setLoading(false)
         
-        // Navigate appropriately based on auth state
-        if (event === 'SIGNED_IN') {
-          router.push('/')
-        } else if (event === 'SIGNED_OUT') {
+        // Only navigate on actual sign out, not on session refresh/tab changes
+        if (event === 'SIGNED_OUT') {
           router.push('/login')
         }
+        // Don't auto-redirect on SIGNED_IN to avoid interrupting user workflows
       }
     )
 

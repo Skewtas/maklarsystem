@@ -1,7 +1,9 @@
-import { supabase } from './supabase'
+import { createServerSupabaseClient } from './supabase-server'
 
 export async function testSupabaseConnection() {
   try {
+    const supabase = await createServerSupabaseClient()
+    
     // Test basic connection
     const { data, error } = await supabase
       .from('users')
@@ -23,6 +25,8 @@ export async function testSupabaseConnection() {
 
 export async function checkTables() {
   try {
+    const supabase = await createServerSupabaseClient()
+    
     // Check if our main tables exist
     const tables = ['users', 'objekt', 'kontakter', 'visningar', 'bud']
     const results = []

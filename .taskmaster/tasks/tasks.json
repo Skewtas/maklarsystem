@@ -9,7 +9,7 @@
         "testStrategy": "Run migration scripts in a staging environment. Verify all columns are created with correct types and constraints. Use Supabase dashboard and SQL queries to check schema integrity.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -17,7 +17,7 @@
             "description": "Review the 'objekt' table requirements, identify all missing fields, and determine the correct data types and constraints for each (categorical, boolean, text, numeric). Ensure naming conventions and nullability are specified.",
             "dependencies": [],
             "details": "Gather input from stakeholders or documentation to ensure all required fields are captured. Document the finalized list of fields and their types for use in migration scripts.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -28,7 +28,7 @@
               1
             ],
             "details": "Follow Supabase migration file naming conventions. Ensure scripts are idempotent and safe for production. Place scripts in the supabase/migrations directory.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -39,7 +39,7 @@
               2
             ],
             "details": "Update interfaces or types to match the new database schema. Ensure type safety and consistency with the migration changes.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -51,7 +51,7 @@
               3
             ],
             "details": "Use Supabase CLI to run migrations. Inspect the schema using Supabase dashboard and SQL queries. Check for errors and validate that all changes are as expected.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -62,7 +62,7 @@
               4
             ],
             "details": "Record the migration details in project documentation and maintain a changelog or migration log file. Ensure documentation is accessible to the team.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -77,7 +77,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -90,7 +90,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -98,7 +98,7 @@
             "description": "Plan the overall form structure, organizing new fields into logical groups and sections based on the PRD and usability best practices.",
             "dependencies": [],
             "details": "Determine which fields belong together, define section headers, and decide on the use of tabs or collapsible panels for grouping. Document the intended layout for implementation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -109,7 +109,7 @@
               1
             ],
             "details": "For each field, select the correct Material UI or Radix UI component. Configure props such as type, label, and placeholder. Ensure accessibility and initial values are set.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -120,7 +120,7 @@
               2
             ],
             "details": "Register each field with React Hook Form using the useForm hook. Ensure controlled/uncontrolled components are handled correctly and field names follow grouping conventions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -556,7 +556,7 @@
     ],
     "metadata": {
       "created": "2025-07-29T10:41:58.748Z",
-      "updated": "2025-07-29T10:41:58.748Z",
+      "updated": "2025-08-02T22:38:36.838Z",
       "description": "Tasks for master context"
     }
   },

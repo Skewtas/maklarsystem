@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from '@/lib/supabase-provider'
 import { toast } from 'sonner'
 
 export default function SetupPage() {
+  const { supabase } = useSupabase()
   const [isLoading, setIsLoading] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<any>(null)
 

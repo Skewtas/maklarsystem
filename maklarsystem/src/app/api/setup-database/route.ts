@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import fs from 'fs'
 import path from 'path'
 
 export async function POST() {
   try {
+    const supabase = await createServerSupabaseClient()
     // Read the schema file
     const schemaPath = path.join(process.cwd(), 'supabase', 'schema.sql')
     const schema = fs.readFileSync(schemaPath, 'utf8')
