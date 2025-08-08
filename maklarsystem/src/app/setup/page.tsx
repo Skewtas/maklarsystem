@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSupabase } from '@/lib/supabase-provider'
+import { useSupabase } from '@/utils/supabase/provider'
 import { toast } from 'sonner'
 
 export default function SetupPage() {

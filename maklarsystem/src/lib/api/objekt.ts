@@ -6,7 +6,7 @@ import { objektCreateSchema, objektUpdateSchema, objektFilterSchema } from '@/li
 import { parseZodError } from '@/lib/validation'
 import type { ValidatedObjektCreate, ValidatedObjektUpdate, ObjektRow } from '@/types/objekt.types'
 import { z } from 'zod'
-import { useSupabase } from '@/lib/supabase-provider'
+import { useSupabase } from '@/utils/supabase/provider'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 type Objekt = Database['public']['Tables']['objekt']['Row']

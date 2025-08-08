@@ -30,3 +30,20 @@ node_modules/
 # Task files
 # tasks.json
 # tasks/ 
+
+# App build caches (do not commit)
+/Users/ranishakir/Maklarsystem/maklarsystem/.next.old/ 
+
+# Archived tools and logs
+/archive/tools/
+/archive/logs/
+/archive/resources/
+/archive/root-src-snapshot/
+
+
+# Archived tools and logs
+/archive/tools/
+/archive/logs/
+/archive/resources/
+/archive/root-src-snapshot/
+

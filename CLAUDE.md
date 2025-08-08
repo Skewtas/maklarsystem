@@ -1,417 +1,384 @@
-# Task Master AI - Claude Code Integration Guide
+# Mäklarsystem - Project Context & Guidelines
 
-## Essential Commands
+## Project Overview
+Swedish real estate management system (Mäklarsystem) for managing properties (objekt), contacts (kontakter), showings (visningar), and bids (bud).
 
-### Core Workflow Commands
+## Tech Stack
+- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS, Radix UI
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **State Management**: React Query (TanStack Query)
+- **Forms**: React Hook Form + Zod validation
+- **UI Components**: Radix UI primitives with glassmorphism styling
+- **Testing**: Jest, Playwright
+- **Security**: CSRF protection, rate limiting, input sanitization
 
-```bash
-# Project Setup
-task-master init                                    # Initialize Task Master in current project
-task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD document
-task-master models --setup                        # Configure AI models interactively
+## 🔄 Project Awareness & Context
 
-# Daily Development Workflow
-task-master list                                   # Show all tasks with status
-task-master next                                   # Get next available task to work on
-task-master show <id>                             # View detailed task information (e.g., task-master show 1.2)
-task-master set-status --id=<id> --status=done    # Mark task complete
+### Always Check First
+- **Read `CLAUDE.md`** at the start of new conversations to understand project architecture, goals, and constraints
+- **Check `TASK.md`** before starting work - if task isn't listed, add it with description and date
+- **Review `PLANNING.md`** (if exists) for architectural decisions and long-term goals
+- **Use consistent naming conventions** as established in the codebase
+- **Follow existing patterns** - check similar files before creating new ones
 
-# Task Management
-task-master add-task --prompt="description" --research        # Add new task with AI assistance
-task-master expand --id=<id> --research --force              # Break task into subtasks
-task-master update-task --id=<id> --prompt="changes"         # Update specific task
-task-master update --from=<id> --prompt="changes"            # Update multiple tasks from ID onwards
-task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes to subtask
-
-# Analysis & Planning
-task-master analyze-complexity --research          # Analyze task complexity
-task-master complexity-report                      # View complexity analysis
-task-master expand --all --research               # Expand all eligible tasks
-
-# Dependencies & Organization
-task-master add-dependency --id=<id> --depends-on=<id>       # Add task dependency
-task-master move --from=<id> --to=<id>                       # Reorganize task hierarchy
-task-master validate-dependencies                            # Check for dependency issues
-task-master generate                                         # Update task markdown files (usually auto-called)
+## Swedish Real Estate Terminology
+```typescript
+// Core business terms - ALWAYS use Swedish terms in code
+Objekt = Property/Listing
+Kontakter = Contacts (säljare/köpare/spekulant)
+Visning = Showing/Open house
+Bud = Bid/Offer
+Mäklare = Real estate agent
+Uppdrag = Assignment/Mandate
+Tillträde = Closing/Move-in date
+Fastighetsbeteckning = Property designation
+Boarea = Living area
+Biarea = Secondary area
+Tomtarea = Plot area
+Utgångspris = Asking price
+Accepterat pris = Accepted price
+Såld = Sold
+Till salu = For sale
+Under kontrakt = Under contract
+Spekulant = Prospective buyer
+Säljare = Seller
+Köpare = Buyer
 ```
 
-## Key Files & Project Structure
+## 🧱 Code Structure & Modularity
 
-### Core Files
+### File Organization & Naming
+- **Use kebab-case** for files: `objekt-form.tsx`, `kontakt-list.tsx`
+- **Never create files > 500 lines** - split into modules when approaching limit
+- **Group by feature/responsibility**:
+  ```
+  components/
+    objekt/
+      ObjektForm.tsx        # Main component (< 300 lines)
+      ObjektForm.hooks.ts   # Custom hooks
+      ObjektForm.utils.ts   # Helper functions
+      ObjektForm.types.ts   # Type definitions
+      ObjektForm.test.tsx   # Component tests
+  ```
 
-- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
-- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
-- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
-- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
-- `.env` - API keys for CLI usage
+### Module Organization
+- **API Routes**: Keep route handlers focused, extract logic to `/lib`
+- **Components**: One component per file, compose smaller components
+- **Utilities**: Group related functions in domain-specific files
+- **Types**: Centralize in `/types` or colocate with features
+- **Maintain Swedish terminology** in types and interfaces
 
-### Claude Code Integration Files
+### Import Conventions
+- **Prefer absolute imports** from `@/` for cross-module imports
+- **Use relative imports** within the same feature/module
+- **Group imports**: React → Next.js → External libs → Internal → Types
 
-- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
-- `.claude/settings.json` - Claude Code tool allowlist and preferences
-- `.claude/commands/` - Custom slash commands for repeated workflows
-- `.mcp.json` - MCP server configuration (project-specific)
+## 📎 Code Style & Conventions
 
-### Directory Structure
+### TypeScript & React
+- **Strict TypeScript** - no `any` types, enable strict mode
+- **Functional components** with hooks (no class components)
+- **Named exports** for components, utilities
+- **Default exports** only for pages/routes
+- **Type everything** - Props, State, API responses
 
+### Validation Patterns
+```typescript
+// Use Zod with Swedish error messages
+const personnummerSchema = z.string()
+  .regex(/^\d{6}-?\d{4}$/, 'Ogiltigt personnummer format');
+
+// Always validate Swedish-specific formats
+const fastighetsbeteckningSchema = z.string()
+  .regex(/^[A-ZÅÄÖ][a-zåäö]+\s+\d+:\d+$/, 'Ogiltig fastighetsbeteckning');
 ```
-project/
-├── .taskmaster/
-│   ├── tasks/              # Task files directory
-│   │   ├── tasks.json      # Main task database
-│   │   ├── task-1.md      # Individual task files
-│   │   └── task-2.md
-│   ├── docs/              # Documentation directory
-│   │   ├── prd.txt        # Product requirements
-│   ├── reports/           # Analysis reports directory
-│   │   └── task-complexity-report.json
-│   ├── templates/         # Template files
-│   │   └── example_prd.txt  # Example PRD template
-│   └── config.json        # AI models & settings
-├── .claude/
-│   ├── settings.json      # Claude Code configuration
-│   └── commands/         # Custom slash commands
-├── .env                  # API keys
-├── .mcp.json            # MCP configuration
-└── CLAUDE.md            # This file - auto-loaded by Claude Code
+
+### Database Conventions
+```sql
+-- Use snake_case for database fields
+-- Keep Swedish terms in column names
+CREATE TABLE objekt (
+  id UUID PRIMARY KEY,
+  fastighetsbeteckning TEXT,
+  utgangspris DECIMAL,
+  boarea INTEGER,
+  objekt_typ TEXT, -- 'villa', 'lagenhet', 'radhus'
+  status TEXT -- 'till_salu', 'under_kontrakt', 'sald'
+);
 ```
 
-## MCP Integration
+## Security Requirements
 
-Task Master provides an MCP server that Claude Code can connect to. Configure in `.mcp.json`:
+### Always Implement
+1. **Input Validation**: Validate all user inputs with Zod schemas
+2. **CSRF Protection**: Use CSRF tokens for state-changing operations
+3. **Rate Limiting**: Apply rate limits to API endpoints
+4. **SQL Injection Prevention**: Use parameterized queries with Supabase
+5. **XSS Prevention**: Sanitize HTML content with DOMPurify
+6. **Authentication**: Check user session on protected routes
+7. **RLS Policies**: Implement Row Level Security in Supabase
 
-```json
-{
-  "mcpServers": {
-    "task-master-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
-      "env": {
-        "ANTHROPIC_API_KEY": "your_key_here",
-        "PERPLEXITY_API_KEY": "your_key_here",
-        "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
-        "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
-        "XAI_API_KEY": "XAI_API_KEY_HERE",
-        "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
-        "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
-        "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
-        "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
-      }
+### Never Do
+- Store sensitive data (personnummer) in plain text
+- Trust client-side validation alone
+- Expose internal IDs in URLs
+- Log sensitive information
+- Skip authentication checks
+- Use dynamic SQL queries
+
+## Performance Guidelines
+
+### Database Optimization
+```typescript
+// Use select to limit fields
+const { data } = await supabase
+  .from('objekt')
+  .select('id, adress, utgangspris, boarea')
+  .limit(20);
+
+// Create appropriate indexes
+CREATE INDEX idx_objekt_status ON objekt(status);
+CREATE INDEX idx_kontakter_typ ON kontakter(kontakt_typ);
+```
+
+### Image Handling
+```typescript
+// Always optimize images
+import Image from 'next/image';
+
+// Use Supabase storage with transformations
+const imageUrl = supabase.storage
+  .from('objekt-images')
+  .getPublicUrl(filename, {
+    transform: {
+      width: 800,
+      height: 600,
+      quality: 75
     }
+  });
+```
+
+## Component Patterns
+
+### Form Components
+```typescript
+// Use React Hook Form with Zod
+const form = useForm<ObjektFormData>({
+  resolver: zodResolver(objektSchema),
+  defaultValues: {
+    status: 'till_salu',
+    // Swedish defaults
   }
+});
+```
+
+### Glassmorphism UI
+```typescript
+// Consistent glass effect styling
+const glassStyles = cn(
+  "backdrop-blur-xl",
+  "bg-white/10",
+  "border border-white/20",
+  "shadow-2xl",
+  "rounded-2xl"
+);
+```
+
+### Async/Error Handling
+```typescript
+// Always handle loading and error states
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<Error | null>(null);
+
+try {
+  setLoading(true);
+  const result = await fetchData();
+  // Handle success
+} catch (err) {
+  setError(err as Error);
+  // User-friendly error message in Swedish
+  toast.error('Kunde inte hämta data');
+} finally {
+  setLoading(false);
 }
 ```
 
-### Essential MCP Tools
+## API Patterns
 
-```javascript
-help; // = shows available taskmaster commands
-// Project setup
-initialize_project; // = task-master init
-parse_prd; // = task-master parse-prd
-
-// Daily workflow
-get_tasks; // = task-master list
-next_task; // = task-master next
-get_task; // = task-master show <id>
-set_task_status; // = task-master set-status
-
-// Task management
-add_task; // = task-master add-task
-expand_task; // = task-master expand
-update_task; // = task-master update-task
-update_subtask; // = task-master update-subtask
-update; // = task-master update
-
-// Analysis
-analyze_project_complexity; // = task-master analyze-complexity
-complexity_report; // = task-master complexity-report
-```
-
-## Claude Code Workflow Integration
-
-### Standard Development Workflow
-
-#### 1. Project Initialization
-
-```bash
-# Initialize Task Master
-task-master init
-
-# Create or obtain PRD, then parse it
-task-master parse-prd .taskmaster/docs/prd.txt
-
-# Analyze complexity and expand tasks
-task-master analyze-complexity --research
-task-master expand --all --research
-```
-
-If tasks already exist, another PRD can be parsed (with new information only!) using parse-prd with --append flag. This will add the generated tasks to the existing list of tasks..
-
-#### 2. Daily Development Loop
-
-```bash
-# Start each session
-task-master next                           # Find next available task
-task-master show <id>                     # Review task details
-
-# During implementation, check in code context into the tasks and subtasks
-task-master update-subtask --id=<id> --prompt="implementation notes..."
-
-# Complete tasks
-task-master set-status --id=<id> --status=done
-```
-
-#### 3. Multi-Claude Workflows
-
-For complex projects, use multiple Claude Code sessions:
-
-```bash
-# Terminal 1: Main implementation
-cd project && claude
-
-# Terminal 2: Testing and validation
-cd project-test-worktree && claude
-
-# Terminal 3: Documentation updates
-cd project-docs-worktree && claude
-```
-
-### Custom Slash Commands
-
-Create `.claude/commands/taskmaster-next.md`:
-
-```markdown
-Find the next available Task Master task and show its details.
-
-Steps:
-
-1. Run `task-master next` to get the next task
-2. If a task is available, run `task-master show <id>` for full details
-3. Provide a summary of what needs to be implemented
-4. Suggest the first implementation step
-```
-
-Create `.claude/commands/taskmaster-complete.md`:
-
-```markdown
-Complete a Task Master task: $ARGUMENTS
-
-Steps:
-
-1. Review the current task with `task-master show $ARGUMENTS`
-2. Verify all implementation is complete
-3. Run any tests related to this task
-4. Mark as complete: `task-master set-status --id=$ARGUMENTS --status=done`
-5. Show the next available task with `task-master next`
-```
-
-## Tool Allowlist Recommendations
-
-Add to `.claude/settings.json`:
-
-```json
-{
-  "allowedTools": [
-    "Edit",
-    "Bash(task-master *)",
-    "Bash(git commit:*)",
-    "Bash(git add:*)",
-    "Bash(npm run *)",
-    "mcp__task_master_ai__*"
-  ]
+### Endpoint Structure
+```typescript
+// app/api/objekt/route.ts
+export async function GET(request: Request) {
+  // 1. Verify authentication
+  // 2. Validate query params
+  // 3. Apply rate limiting
+  // 4. Fetch from Supabase
+  // 5. Return formatted response
 }
 ```
 
-## Configuration & Setup
-
-### API Keys Required
-
-At least **one** of these API keys must be configured:
-
-- `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
-- `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
-- `OPENAI_API_KEY` (GPT models)
-- `GOOGLE_API_KEY` (Gemini models)
-- `MISTRAL_API_KEY` (Mistral models)
-- `OPENROUTER_API_KEY` (Multiple models)
-- `XAI_API_KEY` (Grok models)
-
-An API key is required for any provider used across any of the 3 roles defined in the `models` command.
-
-### Model Configuration
-
-```bash
-# Interactive setup (recommended)
-task-master models --setup
-
-# Set specific models
-task-master models --set-main claude-3-5-sonnet-20241022
-task-master models --set-research perplexity-llama-3.1-sonar-large-128k-online
-task-master models --set-fallback gpt-4o-mini
+### Error Response Format
+```typescript
+// Consistent error responses
+return NextResponse.json(
+  { error: 'Objekt hittades inte' },
+  { status: 404 }
+);
 ```
 
-## Task Structure & IDs
+## 🧪 Testing & Reliability
 
-### Task ID Format
+### Test Requirements
+- **Create tests for all new features** (components, hooks, utilities, API routes)
+- **Update existing tests** when modifying logic
+- **Test structure mirrors app structure**:
+  ```
+  src/
+    components/objekt/ObjektForm.tsx
+  __tests__/
+    components/objekt/ObjektForm.test.tsx
+  ```
 
-- Main tasks: `1`, `2`, `3`, etc.
-- Subtasks: `1.1`, `1.2`, `2.1`, etc.
-- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
+### Test Coverage
+Each feature should include:
+- ✅ Happy path test (expected use)
+- ⚠️ Edge case test (boundary conditions)  
+- ❌ Failure case test (error handling)
+- 🇸🇪 Swedish format test (personnummer, etc.)
 
-### Task Status Values
+### Testing Tools
+- **Jest** for unit tests
+- **React Testing Library** for components
+- **Playwright** for E2E tests
+- **Mock Service Worker (MSW)** for API mocking
 
-- `pending` - Ready to work on
-- `in-progress` - Currently being worked on
-- `done` - Completed and verified
-- `deferred` - Postponed
-- `cancelled` - No longer needed
-- `blocked` - Waiting on external factors
+## ✅ Task Management
 
-### Task Fields
+### Task Tracking
+- **Update `TASK.md`** (or equivalent) immediately after completing tasks
+- **Add discovered tasks** under "Discovered During Work" section
+- **Include context** in task descriptions (file paths, dependencies)
+- **Date all entries** in format: `YYYY-MM-DD`
 
-```json
-{
-  "id": "1.2",
-  "title": "Implement user authentication",
-  "description": "Set up JWT-based auth system",
-  "status": "pending",
-  "priority": "high",
-  "dependencies": ["1.1"],
-  "details": "Use bcrypt for hashing, JWT for tokens...",
-  "testStrategy": "Unit tests for auth functions, integration tests for login flow",
-  "subtasks": []
+### Definition of Done
+Task is complete when:
+- [ ] Feature implemented
+- [ ] Tests written and passing
+- [ ] TypeScript types defined (no `any`)
+- [ ] Swedish validation working
+- [ ] Accessibility checked
+- [ ] Mobile responsive
+- [ ] Error handling implemented
+
+## 📚 Documentation & Explainability
+
+### Code Documentation
+```typescript
+/**
+ * Validates Swedish property designation format
+ * 
+ * @param beteckning - Property designation (e.g., "Kungsholmen 1:23")
+ * @returns True if valid Swedish fastighetsbeteckning
+ * 
+ * @example
+ * validateFastighetsbeteckning("Djursholm 1:234") // true
+ */
+export function validateFastighetsbeteckning(beteckning: string): boolean {
+  // Implementation
 }
 ```
 
-## Claude Code Best Practices with Task Master
-
-### Context Management
-
-- Use `/clear` between different tasks to maintain focus
-- This CLAUDE.md file is automatically loaded for context
-- Use `task-master show <id>` to pull specific task context when needed
-
-### Iterative Implementation
-
-1. `task-master show <subtask-id>` - Understand requirements
-2. Explore codebase and plan implementation
-3. `task-master update-subtask --id=<id> --prompt="detailed plan"` - Log plan
-4. `task-master set-status --id=<id> --status=in-progress` - Start work
-5. Implement code following logged plan
-6. `task-master update-subtask --id=<id> --prompt="what worked/didn't work"` - Log progress
-7. `task-master set-status --id=<id> --status=done` - Complete task
-
-### Complex Workflows with Checklists
-
-For large migrations or multi-step processes:
-
-1. Create a markdown PRD file describing the new changes: `touch task-migration-checklist.md` (prds can be .txt or .md)
-2. Use Taskmaster to parse the new prd with `task-master parse-prd --append` (also available in MCP)
-3. Use Taskmaster to expand the newly generated tasks into subtasks. Consdier using `analyze-complexity` with the correct --to and --from IDs (the new ids) to identify the ideal subtask amounts for each task. Then expand them.
-4. Work through items systematically, checking them off as completed
-5. Use `task-master update-subtask` to log progress on each task/subtask and/or updating/researching them before/during implementation if getting stuck
-
-### Git Integration
-
-Task Master works well with `gh` CLI:
-
-```bash
-# Create PR for completed task
-gh pr create --title "Complete task 1.2: User authentication" --body "Implements JWT auth system as specified in task 1.2"
-
-# Reference task in commits
-git commit -m "feat: implement JWT auth (task 1.2)"
+### Component Documentation
+```typescript
+interface ObjektFormProps {
+  /** Initial object data for editing */
+  objekt?: Objekt;
+  /** Callback fired on successful submission */
+  onSubmit: (data: ObjektFormData) => Promise<void>;
+  /** Whether form is in read-only mode */
+  readonly?: boolean;
+}
 ```
 
-### Parallel Development with Git Worktrees
+### Documentation Updates
+- **Update README.md** when adding features or changing setup
+- **Document Swedish-specific logic** with examples
+- **Add JSDoc comments** for complex functions
+- **Include "Why" comments** for non-obvious decisions:
+  ```typescript
+  // Reason: Swedish personnummer can be 10 or 12 digits
+  // 10: YYMMDD-XXXX (common format)
+  // 12: YYYYMMDD-XXXX (century included)
+  const pattern = /^\d{6,8}-?\d{4}$/;
+  ```
 
-```bash
-# Create worktrees for parallel task development
-git worktree add ../project-auth feature/auth-system
-git worktree add ../project-api feature/api-refactor
+## 🧠 Development Behavior Rules
 
-# Run Claude Code in each worktree
-cd ../project-auth && claude    # Terminal 1: Auth work
-cd ../project-api && claude     # Terminal 2: API work
+### Never Do
+- **Never assume context** - ask if uncertain about requirements
+- **Never use non-existent packages** - verify package exists in package.json
+- **Never delete code** without explicit instruction
+- **Never skip validation** for Swedish formats
+- **Never mix languages** - keep Swedish terms consistent
+- **Never trust client input** - always validate
+- **Never create files unless absolutely necessary**
+- **Never proactively create documentation files** unless explicitly requested
+
+### Always Do
+- **Always check existing patterns** before implementing new ones
+- **Always validate Swedish formats** (personnummer, postnummer, etc.)
+- **Always handle errors gracefully** with Swedish user messages
+- **Always test with Swedish characters** (å, ä, ö)
+- **Always consider mobile users** (responsive design)
+- **Always implement accessibility** (ARIA, keyboard nav)
+- **Always prefer editing existing files** to creating new ones
+- **Do what has been asked** - nothing more, nothing less
+
+### When Uncertain
+- **Check existing codebase** for similar implementations
+- **Refer to examples folder** for patterns
+- **Ask for clarification** rather than assuming
+- **Document assumptions** in comments
+- **Create TODO comments** for unclear requirements
+
+## Common Pitfalls to Avoid
+
+1. **Mixing Languages**: Keep Swedish terms consistent - don't mix "property" and "objekt"
+2. **Ignoring Timezones**: Always use Europe/Stockholm timezone
+3. **Currency Formatting**: Always format as SEK with Swedish conventions
+4. **Date Formats**: Use Swedish format (YYYY-MM-DD) or relative dates
+5. **Phone Numbers**: Validate Swedish formats (+46, 07x, 08x patterns)
+6. **Postal Codes**: Swedish postal codes are 5 digits (XXX XX format)
+
+## Development Workflow
+
+### Project Structure
+```
+maklarsystem/
+├── src/
+│   ├── app/              # Next.js app directory
+│   ├── components/       # Reusable UI components
+│   ├── lib/              # Utilities and helpers
+│   ├── hooks/            # Custom React hooks
+│   ├── types/            # TypeScript definitions
+│   └── utils/            # Utility functions
+├── public/               # Static assets
+├── examples/             # Code examples and patterns
+└── PRPs/                 # Product requirement prompts
 ```
 
-## Troubleshooting
+### Git Workflow
+- Use feature branches: `feature/[feature-name]`
+- Commit messages in English or Swedish (be consistent)
+- Reference issues/tasks in commits when applicable
+- Keep commits atomic and focused
 
-### AI Commands Failing
-
-```bash
-# Check API keys are configured
-cat .env                           # For CLI usage
-
-# Verify model configuration
-task-master models
-
-# Test with different model
-task-master models --set-fallback gpt-4o-mini
-```
-
-### MCP Connection Issues
-
-- Check `.mcp.json` configuration
-- Verify Node.js installation
-- Use `--mcp-debug` flag when starting Claude Code
-- Use CLI as fallback if MCP unavailable
-
-### Task File Sync Issues
-
-```bash
-# Regenerate task files from tasks.json
-task-master generate
-
-# Fix dependency issues
-task-master fix-dependencies
-```
-
-DO NOT RE-INITIALIZE. That will not do anything beyond re-adding the same Taskmaster core files.
-
-## Important Notes
-
-### AI-Powered Operations
-
-These commands make AI calls and may take up to a minute:
-
-- `parse_prd` / `task-master parse-prd`
-- `analyze_project_complexity` / `task-master analyze-complexity`
-- `expand_task` / `task-master expand`
-- `expand_all` / `task-master expand --all`
-- `add_task` / `task-master add-task`
-- `update` / `task-master update`
-- `update_task` / `task-master update-task`
-- `update_subtask` / `task-master update-subtask`
-
-### File Management
-
-- Never manually edit `tasks.json` - use commands instead
-- Never manually edit `.taskmaster/config.json` - use `task-master models`
-- Task markdown files in `tasks/` are auto-generated
-- Run `task-master generate` after manual changes to tasks.json
-
-### Claude Code Session Management
-
-- Use `/clear` frequently to maintain focused context
-- Create custom slash commands for repeated Task Master workflows
-- Configure tool allowlist to streamline permissions
-- Use headless mode for automation: `claude -p "task-master next"`
-
-### Multi-Task Updates
-
-- Use `update --from=<id>` to update multiple future tasks
-- Use `update-task --id=<id>` for single task updates
-- Use `update-subtask --id=<id>` for implementation logging
-
-### Research Mode
-
-- Add `--research` flag for research-based AI enhancement
-- Requires a research model API key like Perplexity (`PERPLEXITY_API_KEY`) in environment
-- Provides more informed task creation and updates
-- Recommended for complex technical tasks
-
----
-
-_This guide ensures Claude Code has immediate access to Task Master's essential functionality for agentic development workflows._
+### Code Review Checklist
+- [ ] Swedish terminology used consistently
+- [ ] Input validation implemented
+- [ ] Error handling in place
+- [ ] TypeScript types defined (no `any`)
+- [ ] Tests written for new functionality
+- [ ] Accessibility requirements met
+- [ ] Mobile responsive design verified
+- [ ] Performance impact assessed

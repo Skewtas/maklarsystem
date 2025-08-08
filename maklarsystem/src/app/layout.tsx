@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/lib/query-provider";
-import { SupabaseProvider } from "@/lib/supabase-provider";
+import { SupabaseProvider } from "@/utils/supabase/provider";
 import { createClient } from "@/utils/supabase/server";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 import { Toaster } from "@/components/ui/toaster";
 
@@ -29,8 +30,10 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SupabaseProvider session={session}>
           <QueryProvider>
-            {children}
-            <Toaster />
+            <AuthProvider>
+              {children}
+              <Toaster />
+            </AuthProvider>
           </QueryProvider>
         </SupabaseProvider>
       </body>

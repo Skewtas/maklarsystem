@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useObjektById, useDeleteObjekt } from '@/lib/api/objekt'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 // Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -159,191 +160,270 @@ export default function ObjektDetailPage() {
             </div>
           </GlassCard>
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Images and Info */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Image Gallery */}
-              <GlassCard className="p-0 overflow-hidden">
-                <div className="relative h-[500px] bg-gradient-to-br from-blue-400 to-purple-500">
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <Camera className="w-16 h-16 text-white/50" />
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4 flex space-x-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="h-20 w-20 bg-white/20 backdrop-blur-xl rounded-xl"></div>
-                    ))}
-                  </div>
-                </div>
-              </GlassCard>
+          {/* Tab Navigation */}
+          <Tabs defaultValue="oversikt" className="w-full">
+            <GlassCard className="p-2 mb-6">
+              <TabsList className="grid grid-cols-4 lg:grid-cols-7 xl:grid-cols-13 gap-1 bg-transparent">
+                <TabsTrigger value="oversikt" className="data-[state=active]:bg-white/40">Översikt</TabsTrigger>
+                <TabsTrigger value="beskrivningar" className="data-[state=active]:bg-white/40">Beskrivningar</TabsTrigger>
+                <TabsTrigger value="spekulanter" className="data-[state=active]:bg-white/40">Spekulanter</TabsTrigger>
+                <TabsTrigger value="dokument" className="data-[state=active]:bg-white/40">Dokument</TabsTrigger>
+                <TabsTrigger value="parter" className="data-[state=active]:bg-white/40">Parter</TabsTrigger>
+                <TabsTrigger value="affaren" className="data-[state=active]:bg-white/40">Affären</TabsTrigger>
+                <TabsTrigger value="bilder" className="data-[state=active]:bg-white/40">Bilder</TabsTrigger>
+                <TabsTrigger value="visningar" className="data-[state=active]:bg-white/40">Visningar</TabsTrigger>
+                <TabsTrigger value="foreningen" className="data-[state=active]:bg-white/40">Föreningen</TabsTrigger>
+                <TabsTrigger value="marknadsforing" className="data-[state=active]:bg-white/40">Marknadsföring</TabsTrigger>
+                <TabsTrigger value="tjanster" className="data-[state=active]:bg-white/40">Tjänster</TabsTrigger>
+                <TabsTrigger value="lan-och-pant" className="data-[state=active]:bg-white/40">Lån och Pant</TabsTrigger>
+                <TabsTrigger value="att-gora" className="data-[state=active]:bg-white/40">Att göra</TabsTrigger>
+              </TabsList>
+            </GlassCard>
 
-              {/* Property Details */}
-              <GlassCard className="p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-6">Objektinformation</h2>
-                
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <DollarSign className="w-5 h-5" />
-                      <span className="text-sm">Utgångspris</span>
+            {/* Tab Content */}
+            <TabsContent value="oversikt">
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left Column - Images and Info */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Image Gallery */}
+                  <GlassCard className="p-0 overflow-hidden">
+                    <div className="relative h-[500px] bg-gradient-to-br from-blue-400 to-purple-500">
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <Camera className="w-16 h-16 text-white/50" />
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4 flex space-x-2">
+                        {[1, 2, 3, 4].map((i) => (
+                          <div key={i} className="h-20 w-20 bg-white/20 backdrop-blur-xl rounded-xl"></div>
+                        ))}
+                      </div>
                     </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.utgangspris ? `${(objekt.utgangspris / 1000000).toFixed(1)} Mkr` : 'Ej angivet'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <Ruler className="w-5 h-5" />
-                      <span className="text-sm">Boarea</span>
-                    </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.boarea ? `${objekt.boarea} m²` : 'Ej angivet'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <Home className="w-5 h-5" />
-                      <span className="text-sm">Antal rum</span>
-                    </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.rum ? `${objekt.rum} rum` : 'Ej angivet'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <Building className="w-5 h-5" />
-                      <span className="text-sm">Biarea</span>
-                    </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.biarea ? `${objekt.biarea} m²` : 'Ej angivet'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <MapPin className="w-5 h-5" />
-                      <span className="text-sm">Tomtarea</span>
-                    </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.tomtarea ? `${objekt.tomtarea} m²` : 'Ej angivet'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                      <CalendarDays className="w-5 h-5" />
-                      <span className="text-sm">Byggår</span>
-                    </div>
-                    <p className="text-xl font-bold text-gray-800">
-                      {objekt.byggaar || 'Ej angivet'}
-                    </p>
-                  </div>
-                </div>
-              </GlassCard>
+                  </GlassCard>
 
-              {/* Description */}
-              {objekt.beskrivning && (
-                <GlassCard className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">Beskrivning</h2>
-                  <p className="text-gray-600 whitespace-pre-wrap">{objekt.beskrivning}</p>
-                </GlassCard>
-              )}
-
-              {/* Location */}
-              <GlassCard className="p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">Plats</h2>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-gray-800">{objekt.adress}</p>
-                      <p className="text-gray-600">{objekt.postnummer} {objekt.ort}</p>
-                      <p className="text-gray-600">{objekt.kommun}, {objekt.lan}</p>
+                  {/* Property Details */}
+                  <GlassCard className="p-6">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-6">Objektinformation</h2>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <DollarSign className="w-5 h-5" />
+                          <span className="text-sm">Utgångspris</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.utgangspris ? `${(objekt.utgangspris / 1000000).toFixed(1)} Mkr` : 'Ej angivet'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <Ruler className="w-5 h-5" />
+                          <span className="text-sm">Boarea</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.boarea ? `${objekt.boarea} m²` : 'Ej angivet'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <Home className="w-5 h-5" />
+                          <span className="text-sm">Antal rum</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.rum ? `${objekt.rum} rum` : 'Ej angivet'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <Building className="w-5 h-5" />
+                          <span className="text-sm">Biarea</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.biarea ? `${objekt.biarea} m²` : 'Ej angivet'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <MapPin className="w-5 h-5" />
+                          <span className="text-sm">Tomtarea</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.tomtarea ? `${objekt.tomtarea} m²` : 'Ej angivet'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                          <CalendarDays className="w-5 h-5" />
+                          <span className="text-sm">Byggår</span>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {objekt.byggaar || 'Ej angivet'}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Map placeholder */}
-                  <div className="h-64 bg-gradient-to-br from-blue-200 to-green-200 rounded-2xl mt-4"></div>
-                </div>
-              </GlassCard>
-            </div>
+                  </GlassCard>
 
-            {/* Right Column - Actions and Info */}
-            <div className="space-y-6">
-              {/* Price Card */}
-              <GlassCard className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-2">Utgångspris</p>
-                  <p className="text-3xl font-bold text-gray-800">
-                    {objekt.utgangspris ? `${objekt.utgangspris.toLocaleString('sv-SE')} kr` : 'Pris på begäran'}
-                  </p>
-                  {objekt.slutpris && (
-                    <>
-                      <p className="text-sm text-gray-600 mt-4 mb-2">Slutpris</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        {objekt.slutpris.toLocaleString('sv-SE')} kr
-                      </p>
-                    </>
+                  {/* Description */}
+                  {objekt.beskrivning && (
+                    <GlassCard className="p-6">
+                      <h2 className="text-xl font-semibold text-gray-800 mb-4">Beskrivning</h2>
+                      <p className="text-gray-600 whitespace-pre-wrap">{objekt.beskrivning}</p>
+                    </GlassCard>
                   )}
+
+                  {/* Location */}
+                  <GlassCard className="p-6">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Plats</h2>
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-3">
+                        <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-gray-800">{objekt.adress}</p>
+                          <p className="text-gray-600">{objekt.postnummer} {objekt.ort}</p>
+                          <p className="text-gray-600">{objekt.kommun}, {objekt.lan}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Map placeholder */}
+                      <div className="h-64 bg-gradient-to-br from-blue-200 to-green-200 rounded-2xl mt-4"></div>
+                    </div>
+                  </GlassCard>
                 </div>
-              </GlassCard>
 
-              {/* Agent Card */}
-              {objekt.maklare && (
-                <GlassCard className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Ansvarig mäklare</h3>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-xl font-semibold">
-                      {objekt.maklare.full_name?.charAt(0) || 'M'}
+                {/* Right Column - Actions and Info */}
+                <div className="space-y-6">
+                  {/* Price Card */}
+                  <GlassCard className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-2">Utgångspris</p>
+                      <p className="text-3xl font-bold text-gray-800">
+                        {objekt.utgangspris ? `${objekt.utgangspris.toLocaleString('sv-SE')} kr` : 'Pris på begäran'}
+                      </p>
+                      {objekt.slutpris && (
+                        <>
+                          <p className="text-sm text-gray-600 mt-4 mb-2">Slutpris</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {objekt.slutpris.toLocaleString('sv-SE')} kr
+                          </p>
+                        </>
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">{objekt.maklare.full_name}</p>
-                      <p className="text-sm text-gray-600">{objekt.maklare.email}</p>
+                  </GlassCard>
+
+                  {/* Agent Card */}
+                  {objekt.maklare && (
+                    <GlassCard className="p-6">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Ansvarig mäklare</h3>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-xl font-semibold">
+                          {objekt.maklare.full_name?.charAt(0) || 'M'}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-800">{objekt.maklare.full_name}</p>
+                          <p className="text-sm text-gray-600">{objekt.maklare.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2 mt-4">
+                        <button className="flex-1 flex items-center justify-center space-x-2 bg-green-500 text-white py-2 rounded-xl hover:bg-green-600 transition-all">
+                          <Phone className="w-4 h-4" />
+                          <span>Ring</span>
+                        </button>
+                        <button className="flex-1 flex items-center justify-center space-x-2 bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition-all">
+                          <Mail className="w-4 h-4" />
+                          <span>E-post</span>
+                        </button>
+                      </div>
+                    </GlassCard>
+                  )}
+
+                  {/* Actions */}
+                  <GlassCard className="p-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Åtgärder</h3>
+                    <div className="space-y-3">
+                      <button className="w-full flex items-center justify-center space-x-2 backdrop-blur-xl bg-white/30 border border-white/40 py-3 rounded-2xl hover:bg-white/40 transition-all">
+                        <Download className="w-5 h-5" />
+                        <span>Ladda ner objektpresentation</span>
+                      </button>
+                      <button className="w-full flex items-center justify-center space-x-2 backdrop-blur-xl bg-white/30 border border-white/40 py-3 rounded-2xl hover:bg-white/40 transition-all">
+                        <Eye className="w-5 h-5" />
+                        <span>Förhandsgranska annons</span>
+                      </button>
                     </div>
-                  </div>
-                  <div className="flex space-x-2 mt-4">
-                    <button className="flex-1 flex items-center justify-center space-x-2 bg-green-500 text-white py-2 rounded-xl hover:bg-green-600 transition-all">
-                      <Phone className="w-4 h-4" />
-                      <span>Ring</span>
-                    </button>
-                    <button className="flex-1 flex items-center justify-center space-x-2 bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition-all">
-                      <Mail className="w-4 h-4" />
-                      <span>E-post</span>
-                    </button>
-                  </div>
-                </GlassCard>
-              )}
+                  </GlassCard>
+                </div>
+              </div>
+            </TabsContent>
 
-              {/* Seller Card */}
-              {objekt.saljare && (
-                <GlassCard className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Säljare</h3>
-                  <div className="space-y-2">
-                    <p className="font-medium text-gray-800">
-                      {objekt.saljare.fornamn} {objekt.saljare.efternamn}
-                    </p>
-                    {objekt.saljare.telefon && (
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <Phone className="w-4 h-4" />
-                        <span>{objekt.saljare.telefon}</span>
-                      </div>
-                    )}
-                    {objekt.saljare.email && (
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <Mail className="w-4 h-4" />
-                        <span>{objekt.saljare.email}</span>
-                      </div>
-                    )}
-                  </div>
-                </GlassCard>
-              )}
-
-              {/* Viewings */}
+            <TabsContent value="beskrivningar">
               <GlassCard className="p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Visningar</h3>
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Beskrivningar</h2>
+                <p className="text-gray-600">Här kommer detaljerade beskrivningar av objektet att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="spekulanter">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Spekulanter</h2>
+                <p className="text-gray-600">Här kommer lista över spekulanter att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="dokument">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Dokument</h2>
+                <p className="text-gray-600">Här kommer dokument relaterade till objektet att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="parter">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Parter</h2>
+                {objekt.saljare && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-800">Säljare</h3>
+                    <div className="space-y-2">
+                      <p className="font-medium text-gray-800">
+                        {objekt.saljare.fornamn} {objekt.saljare.efternamn}
+                      </p>
+                      {objekt.saljare.telefon && (
+                        <div className="flex items-center space-x-2 text-gray-600">
+                          <Phone className="w-4 h-4" />
+                          <span>{objekt.saljare.telefon}</span>
+                        </div>
+                      )}
+                      {objekt.saljare.email && (
+                        <div className="flex items-center space-x-2 text-gray-600">
+                          <Mail className="w-4 h-4" />
+                          <span>{objekt.saljare.email}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="affaren">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Affären</h2>
+                <p className="text-gray-600">Här kommer information om affären att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="bilder">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Bilder</h2>
+                <p className="text-gray-600">Här kommer bildgalleri att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="visningar">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Visningar</h2>
                 {objekt.visningar && objekt.visningar.length > 0 ? (
                   <div className="space-y-3">
                     {objekt.visningar.map((visning: any) => (
@@ -366,23 +446,43 @@ export default function ObjektDetailPage() {
                   Boka visning
                 </button>
               </GlassCard>
+            </TabsContent>
 
-              {/* Actions */}
+            <TabsContent value="foreningen">
               <GlassCard className="p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Åtgärder</h3>
-                <div className="space-y-3">
-                  <button className="w-full flex items-center justify-center space-x-2 backdrop-blur-xl bg-white/30 border border-white/40 py-3 rounded-2xl hover:bg-white/40 transition-all">
-                    <Download className="w-5 h-5" />
-                    <span>Ladda ner objektpresentation</span>
-                  </button>
-                  <button className="w-full flex items-center justify-center space-x-2 backdrop-blur-xl bg-white/30 border border-white/40 py-3 rounded-2xl hover:bg-white/40 transition-all">
-                    <Eye className="w-5 h-5" />
-                    <span>Förhandsgranska annons</span>
-                  </button>
-                </div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Föreningen</h2>
+                <p className="text-gray-600">Här kommer information om föreningen att visas (för bostadsrätter).</p>
               </GlassCard>
-            </div>
-          </div>
+            </TabsContent>
+
+            <TabsContent value="marknadsforing">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Marknadsföring</h2>
+                <p className="text-gray-600">Här kommer marknadsföringsstatistik att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="tjanster">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Tjänster</h2>
+                <p className="text-gray-600">Här kommer tilläggstjänster att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="lan-och-pant">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Lån och Pant</h2>
+                <p className="text-gray-600">Här kommer lån- och pantinformation att visas.</p>
+              </GlassCard>
+            </TabsContent>
+
+            <TabsContent value="att-gora">
+              <GlassCard className="p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Att göra</h2>
+                <p className="text-gray-600">Här kommer objektspecifika uppgifter att visas.</p>
+              </GlassCard>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Delete Confirmation Modal */}

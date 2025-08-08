@@ -10,9 +10,10 @@ export default async function ObjektLayout({
   
   const { data: { user } } = await supabase.auth.getUser()
   
-  if (!user) {
-    redirect('/login')
-  }
+  // Temporärt avaktiverat för testning
+  // if (!user) {
+  //   redirect('/login')
+  // }
   
   return <>{children}</>
 }

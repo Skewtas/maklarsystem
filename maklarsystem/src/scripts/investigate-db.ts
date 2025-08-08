@@ -1,7 +1,7 @@
-import { createServerClient } from '../utils/supabase/server'
+import { createClient } from '../utils/supabase/server'
 
 async function investigateDatabase() {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   console.log('=== Investigating Users Table Dependencies ===\n')
   
@@ -45,7 +45,7 @@ async function investigateDatabase() {
   
   // 3. Check if required columns exist
   const requiredColumns = ['id', 'email', 'name', 'role', 'företag', 'active', 'created_at', 'updated_at']
-  const existingColumns = columns?.map(col => col.column_name) || []
+  const existingColumns = columns?.map((col: any) => col.column_name) || []
   const missingColumns = requiredColumns.filter(col => !existingColumns.includes(col))
   
   if (missingColumns.length > 0) {

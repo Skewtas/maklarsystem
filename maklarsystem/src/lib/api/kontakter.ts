@@ -6,7 +6,7 @@ import { kontaktCreateSchema, kontaktUpdateSchema, kontaktFilterSchema } from '@
 import { parseZodError } from '@/lib/validation'
 import type { ValidatedKontaktCreate, ValidatedKontaktUpdate, KontaktRow } from '@/types/kontakter.types'
 import { z } from 'zod'
-import { useSupabase } from '@/lib/supabase-provider'
+import { useSupabase } from '@/utils/supabase/provider'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 type Kontakt = Database['public']['Tables']['kontakter']['Row']
@@ -256,8 +256,8 @@ export function validateKontaktData(data: unknown, isUpdate = false): ValidatedK
 }
 
 // Helper function to safely fetch and validate kontakt data
-export async function fetchAndValidateKontakt(id: string): Promise<KontaktRow> {
-  const kontakt = await fetchKontaktById(id)
+export async function fetchAndValidateKontakt(supabase: SupabaseClient<Database>, id: string): Promise<KontaktRow> {
+  const kontakt = await fetchKontaktById(supabase, id)
   if (!kontakt) {
     throw new Error('Kontakt hittades inte')
   }
@@ -265,7 +265,7 @@ export async function fetchAndValidateKontakt(id: string): Promise<KontaktRow> {
 }
 
 // Helper function to fetch contacts with relations
-export async function fetchKontakterWithRelations(filters?: z.infer<typeof kontaktFilterSchema>) {
+export async function fetchKontakterWithRelations(supabase: SupabaseClient<Database>, filters?: z.infer<typeof kontaktFilterSchema>) {
   const validatedFilters = filters ? kontaktFilterSchema.parse(filters) : undefined
   
   let query = supabase

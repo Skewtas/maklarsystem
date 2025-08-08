@@ -6,10 +6,12 @@ import { User, LogOut, Settings, ChevronDown } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { signOut } from '@/app/auth/actions'
 import { toast } from 'sonner'
+import { useUser } from '@/hooks/useUser'
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
+  const { user, loading } = useUser()
 
   const handleLogout = async () => {
     try {
@@ -28,7 +30,7 @@ export default function UserMenu() {
         >
           <User className="w-5 h-5" />
           <span className="text-sm hidden md:inline-block">
-            Profil
+            {loading ? 'Laddar...' : user?.full_name || 'Profil'}
           </span>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>

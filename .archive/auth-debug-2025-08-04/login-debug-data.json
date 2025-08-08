@@ -1,0 +1,203 @@
+{
+  "timestamp": "2025-08-04T20:58:59.573Z",
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:48.857Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:48.861Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:48.861Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:48.865Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/css/app/layout.css?v=1754341128552 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:52.326Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/css/app/layout.css?v=1754341128551 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:52.326Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:53.622Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:53.624Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:53.625Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:53.637Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2025-08-04T20:58:53.670Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/media/e4af272ccee01ff0-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:56.718Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/css/app/layout.css?v=1754341133641 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:56.718Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/css/app/layout.css?v=1754341133573 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:56.719Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/css/app/layout.css?v=1754341133498 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "timestamp": "2025-08-04T20:58:56.719Z"
+    }
+  ],
+  "pageErrors": [],
+  "networkResponses": [
+    {
+      "url": "http://localhost:3000/login",
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "cache-control": "no-store, must-revalidate",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Mon, 04 Aug 2025 20:58:47 GMT",
+        "keep-alive": "timeout=5",
+        "transfer-encoding": "chunked",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding",
+        "x-powered-by": "Next.js",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "cross-origin-opener-policy": "unsafe-none",
+        "cross-origin-resource-policy": "cross-origin",
+        "link": "</_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/css/app/layout.css?v=1754341127392>; rel=preload; as=\"style\"",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block"
+      },
+      "timestamp": "2025-08-04T20:58:47.503Z"
+    },
+    {
+      "url": "http://localhost:3000/_next/static/chunks/app/login/page.js",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "transfer-encoding": "chunked",
+        "link": "</_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/css/app/layout.css?v=1754341128552>; rel=preload; as=\"style\"",
+        "cache-control": "no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5",
+        "date": "Mon, 04 Aug 2025 20:58:48 GMT",
+        "content-type": "text/html; charset=utf-8",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding",
+        "x-powered-by": "Next.js"
+      },
+      "timestamp": "2025-08-04T20:58:48.857Z"
+    },
+    {
+      "url": "http://localhost:3000/login",
+      "status": 303,
+      "statusText": "See Other",
+      "headers": {
+        "cache-control": "no-store, must-revalidate",
+        "connection": "keep-alive",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Mon, 04 Aug 2025 20:58:53 GMT",
+        "etag": "\"78p3gz236i0\"",
+        "keep-alive": "timeout=5",
+        "location": "/login?message=An error occurred during login",
+        "transfer-encoding": "chunked",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding",
+        "x-powered-by": "Next.js",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "cross-origin-opener-policy": "unsafe-none",
+        "cross-origin-resource-policy": "cross-origin",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block"
+      },
+      "timestamp": "2025-08-04T20:58:53.244Z"
+    },
+    {
+      "url": "http://localhost:3000/login?message=An%20error%20occurred%20during%20login",
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "cache-control": "no-store, must-revalidate",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Mon, 04 Aug 2025 20:58:53 GMT",
+        "keep-alive": "timeout=5",
+        "transfer-encoding": "chunked",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding",
+        "x-powered-by": "Next.js",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "cross-origin-opener-policy": "unsafe-none",
+        "cross-origin-resource-policy": "cross-origin",
+        "link": "</_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/css/app/layout.css?v=1754341133261>; rel=preload; as=\"style\"",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block"
+      },
+      "timestamp": "2025-08-04T20:58:53.466Z"
+    },
+    {
+      "url": "http://localhost:3000/_next/static/chunks/app/login/page.js",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "transfer-encoding": "chunked",
+        "link": "</_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/css/app/layout.css?v=1754341133573>; rel=preload; as=\"style\"",
+        "cache-control": "no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5",
+        "date": "Mon, 04 Aug 2025 20:58:53 GMT",
+        "content-type": "text/html; charset=utf-8",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding",
+        "x-powered-by": "Next.js"
+      },
+      "timestamp": "2025-08-04T20:58:53.637Z"
+    }
+  ],
+  "summary": {
+    "totalConsoleMessages": 15,
+    "totalErrors": 0,
+    "authRequests": 5,
+    "errorResponses": 2
+  }
+}

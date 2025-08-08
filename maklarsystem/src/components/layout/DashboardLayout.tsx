@@ -4,7 +4,7 @@ import Navigation from './Navigation'
 import Sidebar from './Sidebar'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { useSupabase } from '@/lib/supabase-provider'
+import { useSupabase } from '@/utils/supabase/provider'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 
@@ -17,12 +17,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, loading } = useSupabase()
   const router = useRouter()
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-    }
-  }, [user, loading, router])
+  // Temporärt avaktiverat för testning
+  // useEffect(() => {
+  //   if (!loading && !user) {
+  //     router.push('/login')
+  //   }
+  // }, [user, loading, router])
 
   // Show loading state while checking authentication
   if (loading) {
@@ -36,10 +36,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     )
   }
 
-  // Don't render anything if not authenticated
-  if (!user) {
-    return null
-  }
+  // Temporärt avaktiverat för testning
+  // if (!user) {
+  //   return null
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 flex relative">

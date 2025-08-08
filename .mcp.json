@@ -7,26 +7,23 @@
         "FIRECRAWL_API_KEY": "fc-26f6cd0a0dcd4ad785db8bbeabd7cce5"
       }
     },
-    "task-master-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
-      "env": {
-        "ANTHROPIC_API_KEY": "sk-ant-api03-j5L2cEo6rNNnq-2iHAYO1CjWFI8RVl5kXgJLg1h8CeKxdEVHJMPQpNhLfmjEu1Y9KlnBhQpRQlvJjIGKcPsLAA",
-        "PERPLEXITY_API_KEY": "pplx-5f7b8d04d47cf1e5b4b4d8b5bbcd2c3a5c5d5e5f5g5h5i5j5k5l5m5n5o5p5q5r5s5t5u5v5w5x5y5z",
-        "OPENAI_API_KEY": "sk-proj-abcd1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678",
-        "GOOGLE_API_KEY": "AIzaSyAbCdEfGhIjKlMnOpQrStUvWxYz1234567890",
-        "XAI_API_KEY": "xai-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12",
-        "OPENROUTER_API_KEY": "sk-or-v1-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678",
-        "MISTRAL_API_KEY": "1234567890abcdef1234567890abcdef",
-        "AZURE_OPENAI_API_KEY": "1234567890abcdef1234567890abcdef",
-        "OLLAMA_API_KEY": "ollama-1234567890abcdef1234567890abcdef"
-      }
-    },
     "ElevenLabs": {
       "command": "uvx",
       "args": ["elevenlabs-mcp"],
       "env": {
         "ELEVENLABS_API_KEY": "sk_2ee574e27f14ccf464c3995e70feea2c5c20159f9f698475"
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--read-only",
+        "--project-ref=exreuewsrgavzsbdnghv"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_1b742d6532f45c0a535c1c74fbc1aeeda8a16cee"
       }
     }
   }

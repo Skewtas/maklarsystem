@@ -65,43 +65,59 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  console.log('Login attempt for email:', data.email)
-  console.log('Environment check:', {
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  })
-
   // Validate required fields
   if (!data.email || !data.password) {
     redirect('/login?message=Missing email or password')
   }
 
   try {
-    // Test Supabase connection first
-    const { data: testData, error: testError } = await supabase.from('test').select('*').limit(1)
-    console.log('Supabase connection test:', { testData, testError })
-
     const { data: authData, error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-      console.error('Login error details:', {
-        message: error.message,
-        status: error.status,
-        code: error.code,
-        details: error,
-        stack: error.stack
-      })
+      console.error('Login error:', error.message)
       redirect('/login?message=' + encodeURIComponent(error.message))
     }
-
-    console.log('Login successful for user:', authData?.user?.email)
 
     revalidatePath('/', 'layout')
     redirect('/')
   } catch (error) {
     console.error('Unexpected login error:', error)
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
     redirect('/login?message=An error occurred during login')
+  }
+}
+
+export async function signInWithMagicLink(formData: FormData) {
+  const supabase = await createClient()
+  
+  const email = formData.get('email') as string
+  
+  if (!email) {
+    redirect('/login?message=E-postadress krävs')
+  }
+  
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) {
+    redirect('/login?message=Ogiltig e-postadress')
+  }
+  
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3002'}/auth/callback`,
+      }
+    })
+    
+    if (error) {
+      console.error('Magic link error:', error)
+      redirect('/login?message=' + encodeURIComponent(error.message))
+    }
+    
+    redirect('/login?message=Kontrollera din e-post för inloggningslänken')
+  } catch (error) {
+    console.error('Magic link error:', error)
+    redirect('/login?message=Ett fel uppstod vid sändning av inloggningslänk')
   }
 }
 

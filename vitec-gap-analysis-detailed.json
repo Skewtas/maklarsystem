@@ -1,0 +1,248 @@
+{
+  "generated": "2025-08-04T23:54:07.073Z",
+  "projectPath": "./maklarsystem",
+  "summary": {
+    "totalCoverage": 5,
+    "totalFeatures": 146,
+    "implementedFeatures": 8,
+    "missingFeatures": 138
+  },
+  "categories": {
+    "Objekthantering": {
+      "total": 23,
+      "implemented": 3,
+      "coverage": 13,
+      "priority": "critical",
+      "missing": [
+        "delete_object",
+        "duplicate_object",
+        "archive_object",
+        "object_types_villa",
+        "object_types_apartment",
+        "object_types_land",
+        "object_types_commercial",
+        "status_history",
+        "image_upload",
+        "image_gallery",
+        "image_editing",
+        "floor_plans",
+        "virtual_tours",
+        "360_photos",
+        "drone_footage",
+        "video_upload",
+        "energy_declaration",
+        "property_documents",
+        "validation_rules",
+        "price_calculations"
+      ]
+    },
+    "Kontakter (CRM)": {
+      "total": 19,
+      "implemented": 2,
+      "coverage": 11,
+      "priority": "critical",
+      "missing": [
+        "edit_contact",
+        "delete_contact",
+        "merge_contacts",
+        "contact_types",
+        "gdpr_data_export",
+        "gdpr_right_to_forget",
+        "communication_log",
+        "email_history",
+        "sms_history",
+        "call_logging",
+        "search_contacts",
+        "advanced_search",
+        "duplicate_detection",
+        "contact_matching",
+        "interest_registration",
+        "contact_export",
+        "contact_import"
+      ]
+    },
+    "Visningshantering": {
+      "total": 14,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "critical",
+      "missing": [
+        "viewing_scheduling",
+        "calendar_integration",
+        "time_slot_management",
+        "viewing_registration",
+        "online_booking",
+        "qr_code_checkin",
+        "visitor_tracking",
+        "viewing_feedback",
+        "automated_followup",
+        "interest_rating",
+        "viewing_statistics",
+        "reminder_system",
+        "sms_reminders",
+        "email_reminders"
+      ]
+    },
+    "Budgivning": {
+      "total": 17,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "critical",
+      "missing": [
+        "bidding_start",
+        "bid_registration",
+        "bid_validation",
+        "bid_increase_rules",
+        "realtime_updates",
+        "websocket_connection",
+        "push_notifications",
+        "live_bidding_view",
+        "bid_history",
+        "bid_timeline",
+        "bidder_verification",
+        "bankid_verification",
+        "sms_notifications",
+        "email_notifications",
+        "bidding_close",
+        "bid_export",
+        "bidding_protocol"
+      ]
+    },
+    "Dokumenthantering": {
+      "total": 14,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "critical",
+      "missing": [
+        "contract_templates",
+        "template_library",
+        "custom_templates",
+        "contract_generation",
+        "digital_signing",
+        "bankid_integration",
+        "multi_party_signing",
+        "version_control",
+        "document_upload",
+        "document_categorization",
+        "document_search",
+        "document_sharing",
+        "document_archiving",
+        "audit_trail"
+      ]
+    },
+    "Marknadsföring": {
+      "total": 14,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "high",
+      "missing": [
+        "ad_text_generation",
+        "ai_text_assistant",
+        "image_optimization",
+        "social_media_posts",
+        "facebook_integration",
+        "instagram_integration",
+        "marketing_materials",
+        "print_materials",
+        "brochure_generation",
+        "window_cards",
+        "qr_code_generation",
+        "email_campaigns",
+        "newsletter_system",
+        "campaign_templates"
+      ]
+    },
+    "Hemnet Integration": {
+      "total": 14,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "critical",
+      "missing": [
+        "object_sync",
+        "realtime_sync",
+        "batch_sync",
+        "selective_sync",
+        "image_upload",
+        "status_updates",
+        "price_changes",
+        "viewing_times_sync",
+        "bidding_sync",
+        "error_handling",
+        "retry_mechanism",
+        "sync_status_dashboard",
+        "bulk_operations",
+        "mass_publish"
+      ]
+    },
+    "Ekonomi": {
+      "total": 12,
+      "implemented": 0,
+      "coverage": 0,
+      "priority": "high",
+      "missing": [
+        "commission_calculation",
+        "split_commission",
+        "invoice_generation",
+        "automatic_invoicing",
+        "payment_tracking",
+        "expense_tracking",
+        "monthly_reports",
+        "quarterly_reports",
+        "agent_statistics",
+        "office_statistics",
+        "custom_reports",
+        "excel_export"
+      ]
+    },
+    "Säkerhet": {
+      "total": 10,
+      "implemented": 1,
+      "coverage": 10,
+      "priority": "critical",
+      "missing": [
+        "bankid_login",
+        "two_factor_auth",
+        "role_based_access",
+        "permission_system",
+        "audit_logging",
+        "access_logs",
+        "data_encryption",
+        "backup_system",
+        "gdpr_tools"
+      ]
+    },
+    "Mobil": {
+      "total": 9,
+      "implemented": 2,
+      "coverage": 22,
+      "priority": "medium",
+      "missing": [
+        "ios_app",
+        "android_app",
+        "offline_mode",
+        "data_sync",
+        "photo_upload",
+        "camera_integration",
+        "push_notifications",
+        "gps_integration"
+      ]
+    }
+  },
+  "recommendations": {
+    "immediate": [
+      "Visningshantering - Digital bokning system",
+      "Budgivning - Realtidssystem med notifieringar",
+      "Dokumenthantering - E-signering integration"
+    ],
+    "shortTerm": [
+      "Hemnet API integration",
+      "Ekonomi och provisionsberäkning",
+      "Avancerad säkerhet med BankID"
+    ],
+    "longTerm": [
+      "Mobilapplikationer för iOS/Android",
+      "AI-driven textgenerering",
+      "Avancerad marknadsanalys"
+    ]
+  }
+}

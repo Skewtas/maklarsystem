@@ -1,0 +1,220 @@
+{
+  "summary": {
+    "totalCoverage": "8.0",
+    "implemented": 8,
+    "total": 100,
+    "missing": 92
+  },
+  "categories": {
+    "objekthantering": {
+      "name": "Objekthantering",
+      "total": 10,
+      "implemented": 3,
+      "missing": 7,
+      "coverage": "30.0",
+      "missingFeatures": [
+        "Bilduppladdning och galleri",
+        "Prishistorik",
+        "Visningsschemaläggning",
+        "Marknadsföringstext",
+        "Energideklaration",
+        "Planlösning",
+        "Virtuell visning"
+      ]
+    },
+    "kontakthantering": {
+      "name": "Kontakthantering (CRM)",
+      "total": 10,
+      "implemented": 2,
+      "missing": 8,
+      "coverage": "20.0",
+      "missingFeatures": [
+        "Kontakthistorik",
+        "Automatiska utskick",
+        "Segmentering",
+        "Aktivitetslogg",
+        "Dokument per kontakt",
+        "Kommunikationshistorik",
+        "Intresseanmälan",
+        "Matchning mot objekt"
+      ]
+    },
+    "visningshantering": {
+      "name": "Visningshantering",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "Öppna visningar",
+        "Privata visningar",
+        "Digital bokning",
+        "Påminnelser SMS/e-post",
+        "Deltagarlista",
+        "QR-kod registrering",
+        "Visningsrapport",
+        "Kalendersynk",
+        "Visningsstatistik",
+        "COVID-anpassningar"
+      ]
+    },
+    "budhantering": {
+      "name": "Budhantering",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "Digital budgivning",
+        "Budlogg",
+        "SMS/e-post bekräftelser",
+        "Budgivningshistorik",
+        "Automatisk rangordning",
+        "Budgivarregister",
+        "Kontraktsgenerering",
+        "Budgivningsrapport",
+        "Transparens enligt lag",
+        "Arkivering"
+      ]
+    },
+    "dokumenthantering": {
+      "name": "Dokumenthantering",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "Mallar för alla dokument",
+        "E-signering",
+        "Automatisk ifyllning",
+        "Versionshantering",
+        "Arkivering",
+        "Objektbeskrivning",
+        "Köpekontrakt",
+        "Depositionsavtal",
+        "Uppdragsavtal",
+        "Boendekostnadskalkyl"
+      ]
+    },
+    "marknadsföring": {
+      "name": "Marknadsföring & Publicering",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "Hemnet-integration",
+        "Booli-integration",
+        "Blocket Bostad",
+        "Social media-publicering",
+        "Annonsmallar",
+        "Bildoptimering",
+        "SEO-optimering",
+        "Kampanjhantering",
+        "QR-koder",
+        "Virtuella visningar"
+      ]
+    },
+    "ekonomi": {
+      "name": "Ekonomi & Rapporter",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "Provisionsberäkning",
+        "Fakturering",
+        "Kostnadsuppföljning",
+        "Månadsrapporter",
+        "Årsrapporter",
+        "Säljstatistik",
+        "Pipeline-översikt",
+        "Prognoser",
+        "Export till ekonomisystem",
+        "Mäklarstatistik"
+      ]
+    },
+    "integration": {
+      "name": "Integrationer & API",
+      "total": 10,
+      "implemented": 0,
+      "missing": 10,
+      "coverage": "0.0",
+      "missingFeatures": [
+        "REST API",
+        "Webhook-support",
+        "Hemnet API",
+        "Booli API",
+        "UC-integration",
+        "Ekonomisystem",
+        "E-postsystem",
+        "SMS-tjänster",
+        "Kalendersynk",
+        "BankID"
+      ]
+    },
+    "mobil": {
+      "name": "Mobil & Tillgänglighet",
+      "total": 10,
+      "implemented": 1,
+      "missing": 9,
+      "coverage": "10.0",
+      "missingFeatures": [
+        "Mobilapp iOS/Android",
+        "Offline-stöd",
+        "Push-notiser",
+        "Kamera-integration",
+        "GPS-funktioner",
+        "Digital signatur mobil",
+        "Snabb objektregistrering",
+        "Visningsregistrering",
+        "Kontaktscanning"
+      ]
+    },
+    "säkerhet": {
+      "name": "Säkerhet & Compliance",
+      "total": 10,
+      "implemented": 2,
+      "missing": 8,
+      "coverage": "20.0",
+      "missingFeatures": [
+        "BankID-inloggning",
+        "Tvåfaktorsautentisering",
+        "Rollbaserad behörighet",
+        "Aktivitetslogg",
+        "Dataexport",
+        "Rätt att bli glömd",
+        "Säkerhetskopiering",
+        "Disaster recovery"
+      ]
+    }
+  },
+  "priorities": [
+    {
+      "phase": "Fas 1 - MVP (Måste ha)",
+      "categories": [
+        "visningshantering",
+        "budhantering",
+        "dokumenthantering"
+      ],
+      "reason": "Kärnfunktionalitet för daglig mäklarverksamhet"
+    },
+    {
+      "phase": "Fas 2 - Marknadsintegration",
+      "categories": [
+        "marknadsföring",
+        "integration"
+      ],
+      "reason": "Kritiskt för objektexponering och effektivitet"
+    },
+    {
+      "phase": "Fas 3 - Avancerade funktioner",
+      "categories": [
+        "ekonomi",
+        "mobil"
+      ],
+      "reason": "Förbättrad användarupplevelse och affärsinsikt"
+    }
+  ],
+  "generatedAt": "2025-08-04T23:19:37.459Z"
+}

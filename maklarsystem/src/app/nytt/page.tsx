@@ -15,7 +15,7 @@ import { InteriorSection } from '@/components/forms/sections/InteriorSection'
 import { BeskrivningarSection } from '@/components/forms/sections/BeskrivningarSection'
 import { ByggnadSection } from '@/components/forms/sections/ByggnadSection'
 import { AvgifterSection } from '@/components/forms/sections/AvgifterSection'
-import { useSupabase } from '@/lib/supabase-provider'
+import { useSupabase } from '@/utils/supabase/provider'
 
 // Glass Card Component
 const GlassCard = ({ children, className = "", hover = true, ...props }: { 

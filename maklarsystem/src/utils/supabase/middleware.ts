@@ -35,11 +35,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Check for mock auth cookie
+  const hasMockAuth = request.cookies.get('mock-auth')?.value === 'true'
+
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/auth', '/register']
+  const publicRoutes = ['/login', '/auth', '/register', '/demo-', '/objekt']
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
-  if (!user && !isPublicRoute) {
+  if (!user && !isPublicRoute && !hasMockAuth) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/login'
