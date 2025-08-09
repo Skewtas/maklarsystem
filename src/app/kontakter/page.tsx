@@ -39,8 +39,8 @@ const FloatingElements = () => (
 
 export default function KontakterPage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [kategoriFilter, setKategoriFilter] = useState('alla')
-  const [typFilter, setTypFilter] = useState('alla')
+  const [kategoriFilter, setKategoriFilter] = useState<'saljare' | 'kopare' | 'spekulant' | 'ovrig' | 'alla'>('alla')
+  const [typFilter, setTypFilter] = useState<'privatperson' | 'foretag' | 'alla'>('alla')
   const [selectedKontakter, setSelectedKontakter] = useState<string[]>([])
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
@@ -140,7 +140,7 @@ export default function KontakterPage() {
   if (error) {
     return (
       <DashboardLayout>
-        <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 relative overflow-hidden -m-6 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 relative overflow-hidden -m-6 p-6 pt-2">
           <FloatingElements />
           <div className="relative z-10 flex items-center justify-center min-h-[400px]">
             <GlassCard className="p-8 text-center">
@@ -160,7 +160,7 @@ export default function KontakterPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 relative overflow-hidden -m-6 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 relative overflow-hidden -m-6 p-6 pt-2">
         <FloatingElements />
         
         <div className="relative z-10 space-y-6">
@@ -205,7 +205,7 @@ export default function KontakterPage() {
 
               {/* Filters */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Select.Root value={kategoriFilter} onValueChange={setKategoriFilter}>
+                <Select.Root value={kategoriFilter} onValueChange={(value) => setKategoriFilter(value as 'saljare' | 'kopare' | 'spekulant' | 'ovrig' | 'alla')}>
                   <Select.Trigger className="flex items-center justify-between backdrop-blur-xl bg-white/20 border border-white/30 px-4 py-3 rounded-2xl font-medium text-gray-700 hover:bg-white/30 transition-all duration-300 min-w-[160px]">
                     <Select.Value placeholder="Kategori" />
                     <ChevronDown className="w-4 h-4" />
@@ -233,7 +233,7 @@ export default function KontakterPage() {
                   </Select.Portal>
                 </Select.Root>
 
-                <Select.Root value={typFilter} onValueChange={setTypFilter}>
+                <Select.Root value={typFilter} onValueChange={(value) => setTypFilter(value as 'privatperson' | 'foretag' | 'alla')}>
                   <Select.Trigger className="flex items-center justify-between backdrop-blur-xl bg-white/20 border border-white/30 px-4 py-3 rounded-2xl font-medium text-gray-700 hover:bg-white/30 transition-all duration-300 min-w-[160px]">
                     <Select.Value placeholder="Typ" />
                     <ChevronDown className="w-4 h-4" />

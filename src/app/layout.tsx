@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/lib/query-provider";
-import { SupabaseProvider } from "@/lib/supabase-provider";
+import { SupabaseProvider } from "@/utils/supabase/provider";
 import { createClient } from "@/utils/supabase/server";
 
 import { Toaster } from "@/components/ui/toaster";

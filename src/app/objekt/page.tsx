@@ -113,7 +113,7 @@ export default function ObjektPage() {
   if (error) {
     return (
       <DashboardLayout>
-        <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 relative overflow-hidden -m-6 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 relative overflow-hidden p-6 pt-2">
           <FloatingElements />
           <div className="relative z-10 flex items-center justify-center min-h-[400px]">
             <GlassCard className="p-8 text-center">
@@ -133,7 +133,7 @@ export default function ObjektPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-green-100 relative overflow-hidden -m-6 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-green-100 relative overflow-hidden p-6 pt-2">
         <FloatingElements />
         
         <div className="relative z-10 space-y-6">

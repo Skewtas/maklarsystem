@@ -14,7 +14,7 @@ export default function Navigation({ onMenuClick, notificationCount = 0 }: Navig
   const [searchQuery, setSearchQuery] = useState('')
 
   return (
-    <nav className="bg-white border-b border-gray-200 h-16 flex items-center px-6 gap-4 shadow-sm">
+    <nav className="bg-white border-b border-gray-200 h-16 flex items-center px-6 gap-4 shadow-sm relative z-50">
       {/* Left section */}
       <div className="flex items-center gap-2">
         {/* Hamburger menu */}

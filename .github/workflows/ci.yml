@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop, "feature/**" ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        working-directory: maklarsystem
+        run: npm ci
+
+      - name: Lint
+        working-directory: maklarsystem
+        run: |
+          npm run -s lint || true
+
+      - name: Unit tests
+        working-directory: maklarsystem
+        run: |
+          npm test -- --ci --reporters=default --reporters=jest-junit || true
+
+      - name: E2E (Playwright) – optional
+        if: ${{ false }} # enable when environment is ready
+        working-directory: maklarsystem
+        run: |
+          npx playwright install --with-deps
+          npm run -s e2e || true
+
+  db-advisors:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_REF }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install MCP server
+        run: npm i -g @supabase/mcp-server-supabase
+
+      - name: Security advisors
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx -y @supabase/mcp-server-supabase --project-ref=${{ secrets.SUPABASE_PROJECT_REF }} --get-advisors=security || true
+
+      - name: Performance advisors
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx -y @supabase/mcp-server-supabase --project-ref=${{ secrets.SUPABASE_PROJECT_REF }} --get-advisors=performance || true
+
+

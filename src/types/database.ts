@@ -198,6 +198,24 @@ export interface Database {
           // Availability (existing)
           tillgangsdatum: string | null
           visningsinfo: string | null
+          
+          // Priority 1 - Essential Fields
+          fastighetsbeteckning: string | null
+          undertyp: 'parhus' | 'kedjehus' | 'radhus_mellan' | 'radhus_gavelbostad' | 'enplansvilla' | 'tvåplansvilla' | 'souterrangvilla' | 'sluttningshus' | 'atriumhus' | 'funkisvilla' | 'herrgård' | 'torp' | 'sjötomt' | 'skogstomt' | 'åkertomt' | null
+          andel_i_forening: number | null
+          andelstal: number | null
+          virtuell_visning_url: string | null
+          
+          // Priority 2 - Valuable Fields
+          boendekalkyl_url: string | null
+          standard_niva: 'hög' | 'mycket_hög' | 'normal' | 'låg' | 'renovering_behövs' | 'totalrenovering_krävs' | null
+          tillganglighetsanpassad: boolean | null
+          laddbox: boolean | null
+          solceller: boolean | null
+          solceller_kapacitet_kwp: number | null
+          laddbox_typ: '1-fas_3.7kW' | '3-fas_11kW' | '3-fas_22kW' | 'dc_snabbladdare' | null
+          laddbox_antal: number | null
+          
           created_at: string
           updated_at: string
         }
@@ -357,6 +375,24 @@ export interface Database {
           // Availability (existing)
           tillgangsdatum?: string | null
           visningsinfo?: string | null
+          
+          // Priority 1 - Essential Fields
+          fastighetsbeteckning?: string | null
+          undertyp?: 'parhus' | 'kedjehus' | 'radhus_mellan' | 'radhus_gavelbostad' | 'enplansvilla' | 'tvåplansvilla' | 'souterrangvilla' | 'sluttningshus' | 'atriumhus' | 'funkisvilla' | 'herrgård' | 'torp' | 'sjötomt' | 'skogstomt' | 'åkertomt' | null
+          andel_i_forening?: number | null
+          andelstal?: number | null
+          virtuell_visning_url?: string | null
+          
+          // Priority 2 - Valuable Fields
+          boendekalkyl_url?: string | null
+          standard_niva?: 'hög' | 'mycket_hög' | 'normal' | 'låg' | 'renovering_behövs' | 'totalrenovering_krävs' | null
+          tillganglighetsanpassad?: boolean | null
+          laddbox?: boolean | null
+          solceller?: boolean | null
+          solceller_kapacitet_kwp?: number | null
+          laddbox_typ?: '1-fas_3.7kW' | '3-fas_11kW' | '3-fas_22kW' | 'dc_snabbladdare' | null
+          laddbox_antal?: number | null
+          
           created_at?: string
           updated_at?: string
         }
@@ -516,6 +552,24 @@ export interface Database {
           // Availability (existing)
           tillgangsdatum?: string | null
           visningsinfo?: string | null
+          
+          // Priority 1 - Essential Fields
+          fastighetsbeteckning?: string | null
+          undertyp?: 'parhus' | 'kedjehus' | 'radhus_mellan' | 'radhus_gavelbostad' | 'enplansvilla' | 'tvåplansvilla' | 'souterrangvilla' | 'sluttningshus' | 'atriumhus' | 'funkisvilla' | 'herrgård' | 'torp' | 'sjötomt' | 'skogstomt' | 'åkertomt' | null
+          andel_i_forening?: number | null
+          andelstal?: number | null
+          virtuell_visning_url?: string | null
+          
+          // Priority 2 - Valuable Fields
+          boendekalkyl_url?: string | null
+          standard_niva?: 'hög' | 'mycket_hög' | 'normal' | 'låg' | 'renovering_behövs' | 'totalrenovering_krävs' | null
+          tillganglighetsanpassad?: boolean | null
+          laddbox?: boolean | null
+          solceller?: boolean | null
+          solceller_kapacitet_kwp?: number | null
+          laddbox_typ?: '1-fas_3.7kW' | '3-fas_11kW' | '3-fas_22kW' | 'dc_snabbladdare' | null
+          laddbox_antal?: number | null
+          
           created_at?: string
           updated_at?: string
         }
@@ -773,11 +827,7 @@ export interface Database {
     Views: {
       [_ in never]: never
     }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
+    Functions: { [_ in never]: never }
+    Enums: { [_ in never]: never }
   }
 } 

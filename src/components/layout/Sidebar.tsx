@@ -26,7 +26,7 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: Plus, label: 'Nytt', href: '/nytt' },
-  { icon: Home, label: 'Startsida', href: '/' },
+  { icon: Home, label: 'Startsida', href: '/dashboard' },
   { icon: Building, label: 'Objekt', href: '/objekt' },
   { icon: Users, label: 'Kontakter', href: '/kontakter' },
   { icon: FolderOpen, label: 'Projekt', href: '/projekt' },
@@ -58,8 +58,8 @@ export default function Sidebar({ isOpen, isPinned = false }: SidebarProps) {
     <aside
       className={cn(
         'bg-slate-900 text-white transition-all duration-300 flex flex-col border-r border-slate-800',
-        // Mobile states - keep fixed positioning
-        'fixed left-0 top-0 bottom-0 z-40 lg:relative lg:z-auto',
+        // Mobile states - keep fixed positioning with proper z-index
+        'fixed left-0 top-0 bottom-0 z-40 lg:relative lg:z-10',
         isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64',
         // Desktop states - use relative positioning in flex layout
         'lg:translate-x-0',
@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, isPinned = false }: SidebarProps) {
         <ul className="space-y-1 px-3">
           {menuItems.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href || (item.href === '/' && pathname === '/')
+            const isActive = pathname === item.href || (item.href === '/dashboard' && pathname === '/dashboard')
             
             return (
               <li key={item.href}>
@@ -116,7 +116,7 @@ export default function Sidebar({ isOpen, isPinned = false }: SidebarProps) {
                   
                   {/* Tooltip for collapsed state on desktop */}
                   {!isOpen && isLargeScreen && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-sm rounded-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-sm rounded-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-60">
                       {item.label}
                     </div>
                   )}

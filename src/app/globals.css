@@ -54,3 +54,20 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, Opera */
 }
+
+/* Layout fix for sidebar and main content */
+.sidebar-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar-layout .sidebar {
+  flex-shrink: 0;
+}
+
+.sidebar-layout .main-content {
+  flex: 1;
+  min-width: 0; /* Prevents flex child from overflowing */
+  position: relative;
+  z-index: 1;
+}
