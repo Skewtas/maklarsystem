@@ -11,6 +11,8 @@ Swedish real estate management system (Mäklarsystem) for managing properties (o
 - **UI Components**: Radix UI primitives with glassmorphism styling
 - **Testing**: Jest, Playwright
 - **Security**: CSRF protection, rate limiting, input sanitization
+- **Deployment**: Vercel/Railway (configure as needed)
+- **CI/CD**: GitHub Actions (if configured)
 
 ## 🔄 Project Awareness & Context
 
@@ -125,6 +127,8 @@ CREATE TABLE objekt (
 - Log sensitive information
 - Skip authentication checks
 - Use dynamic SQL queries
+- Commit .env files to repository
+- Accept file uploads without validation
 
 ## Performance Guidelines
 
@@ -317,12 +321,12 @@ interface ObjektFormProps {
 ### Never Do
 - **Never assume context** - ask if uncertain about requirements
 - **Never use non-existent packages** - verify package exists in package.json
-- **Never delete code** without explicit instruction
 - **Never skip validation** for Swedish formats
 - **Never mix languages** - keep Swedish terms consistent
 - **Never trust client input** - always validate
 - **Never create files unless absolutely necessary**
-- **Never proactively create documentation files** unless explicitly requested
+- **Never expose API keys** in frontend code
+- **Never store sensitive data in localStorage** - use secure cookies
 
 ### Always Do
 - **Always check existing patterns** before implementing new ones
@@ -332,6 +336,8 @@ interface ObjektFormProps {
 - **Always consider mobile users** (responsive design)
 - **Always implement accessibility** (ARIA, keyboard nav)
 - **Always prefer editing existing files** to creating new ones
+- **Always run typecheck before committing** - `npm run typecheck`
+- **Always check for unused dependencies** periodically
 - **Do what has been asked** - nothing more, nothing less
 
 ### When Uncertain
@@ -340,6 +346,12 @@ interface ObjektFormProps {
 - **Ask for clarification** rather than assuming
 - **Document assumptions** in comments
 - **Create TODO comments** for unclear requirements
+
+## ⚠️ Known Issues
+- TypeScript errors in API routes (ongoing fix)
+- Some test files have type mismatches  
+- Property search schema needs alignment with API
+- Multiple environment variables need consolidation
 
 ## Common Pitfalls to Avoid
 
@@ -362,9 +374,7 @@ maklarsystem/
 │   ├── hooks/            # Custom React hooks
 │   ├── types/            # TypeScript definitions
 │   └── utils/            # Utility functions
-├── public/               # Static assets
-├── examples/             # Code examples and patterns
-└── PRPs/                 # Product requirement prompts
+└── public/               # Static assets
 ```
 
 ### Git Workflow

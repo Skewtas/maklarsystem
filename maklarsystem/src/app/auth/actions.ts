@@ -48,8 +48,18 @@ export async function signup(formData: FormData) {
       redirect('/login?message=' + encodeURIComponent(error.message))
     }
 
+    // För projekt utan e‑postbekräftelse: logga in direkt och gå till hemsidan
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    })
+    if (signInError) {
+      // Om inloggning inte behövs (session redan satt), ignorera och fortsätt
+      console.warn('Sign-in after signup warning:', signInError.message)
+    }
+
     revalidatePath('/', 'layout')
-    redirect('/login?message=Check your email to confirm your account')
+    redirect('/')
   } catch (error) {
     console.error('Signup error:', error)
     redirect('/login?message=An error occurred during signup')
@@ -71,16 +81,18 @@ export async function login(formData: FormData) {
   }
 
   try {
-    const { data: authData, error } = await supabase.auth.signInWithPassword(data)
-
+    const { error } = await supabase.auth.signInWithPassword(data)
     if (error) {
       console.error('Login error:', error.message)
       redirect('/login?message=' + encodeURIComponent(error.message))
     }
-
     revalidatePath('/', 'layout')
     redirect('/')
-  } catch (error) {
+  } catch (error: any) {
+    // In Next.js, redirect() throws a NEXT_REDIRECT error. Re-throw it instead of treating as failure.
+    if (error?.digest && String(error.digest).startsWith('NEXT_REDIRECT')) {
+      throw error
+    }
     console.error('Unexpected login error:', error)
     redirect('/login?message=An error occurred during login')
   }

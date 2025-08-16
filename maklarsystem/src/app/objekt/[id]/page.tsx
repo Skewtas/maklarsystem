@@ -1,12 +1,12 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { ArrowLeft, Edit, Trash2, MapPin, Home, Calendar, Users, Eye, Heart, Phone, Mail, Share2, Download, Camera, DollarSign, Ruler, CalendarDays, Building } from 'lucide-react'
 import Link from 'next/link'
 import { useObjektById, useDeleteObjekt } from '@/lib/api/objekt'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 // Glass Card Component
@@ -28,10 +28,104 @@ export default function ObjektDetailPage() {
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
+  const searchParams = useSearchParams()
+  const initialTab = (searchParams?.get('tab') as string) || 'oversikt'
   
   const { data: objekt, isLoading, error } = useObjektById(id)
   const deleteObjekt = useDeleteObjekt()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  type GalleryImage = { id: string; signedUrl?: string; caption?: string | null }
+  const [images, setImages] = useState<GalleryImage[]>([])
+  const [uploading, setUploading] = useState(false)
+
+  // Load images when objekt is available
+  useEffect(() => {
+    const loadImages = async () => {
+      if (!id) return
+      const res = await fetch(`/api/properties/${id}/images`)
+      if (!res.ok) return
+      const json = await res.json()
+      const items: { id: string }[] = (json?.data || []).map((r: any) => ({ id: r.id }))
+      // resolve signed urls in parallel
+      // fetch CSRF token once (double-submit)
+      let csrfToken: string | undefined
+      try {
+        const tkRes = await fetch('/api/csrf-token', { credentials: 'include' })
+        const tkJson = tkRes.ok ? await tkRes.json() : null
+        csrfToken = tkJson?.token
+      } catch {}
+      const signed = await Promise.all(
+        items.map(async (it) => {
+          const sr = await fetch(`/api/properties/${id}/images/signed-url`, {
+            method: 'POST',
+            headers: csrfToken ? { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageId: it.id, expiresIn: 600 })
+          })
+          if (!sr.ok) return { id: it.id, signedUrl: undefined }
+          const sj = await sr.json()
+          return { id: it.id, signedUrl: sj?.data?.signedUrl as string | undefined }
+        })
+      )
+      setImages(signed)
+    }
+    loadImages()
+  }, [id])
+
+  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputEl = e.currentTarget
+    const files = inputEl?.files
+    if (!files || files.length === 0) return
+    setUploading(true)
+    try {
+      // Fetch CSRF token for double-submit pattern
+      const tkRes = await fetch('/api/csrf-token', { credentials: 'include' })
+      const tkJson = tkRes.ok ? await tkRes.json() : null
+      const csrfToken = tkJson?.token as string | undefined
+
+      for (const file of Array.from(files)) {
+        const fd = new FormData()
+        fd.append('file', file)
+        // add CSRF token param for middleware doubleSubmit
+        if (csrfToken) fd.append('csrfToken', csrfToken)
+        const res = await fetch(`/api/properties/${id}/images`, { method: 'POST', body: fd, headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : undefined, credentials: 'include' })
+        if (!res.ok) {
+          const msg = (await res.json()).message || 'Fel vid uppladdning'
+          toast.error(msg)
+          continue
+        }
+        // Optimistic add using returned signed url
+        const rj = await res.json().catch(() => null)
+        if (rj?.data?.id && rj?.data?.signedUrl) {
+          setImages(prev => [{ id: rj.data.id, signedUrl: rj.data.signedUrl }, ...prev])
+        }
+      }
+      toast.success('Bilder uppladdade')
+      // reload list
+      const res = await fetch(`/api/properties/${id}/images`)
+      if (res.ok) {
+        const json = await res.json()
+        const items: { id: string }[] = (json?.data || []).map((r: any) => ({ id: r.id }))
+        const signed = await Promise.all(
+          items.map(async (it) => {
+            const sr = await fetch(`/api/properties/${id}/images/signed-url`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageId: it.id, expiresIn: 600 })
+            })
+            if (!sr.ok) return { id: it.id, signedUrl: undefined }
+            const sj = await sr.json()
+            return { id: it.id, signedUrl: sj?.data?.signedUrl as string | undefined }
+          })
+        )
+        setImages(signed)
+      }
+    } finally {
+      setUploading(false)
+      // reset input value to allow re-upload same file
+      if (inputEl) inputEl.value = ''
+    }
+  }
 
   const handleDelete = async () => {
     try {
@@ -161,7 +255,7 @@ export default function ObjektDetailPage() {
           </GlassCard>
 
           {/* Tab Navigation */}
-          <Tabs defaultValue="oversikt" className="w-full">
+          <Tabs defaultValue={initialTab} className="w-full">
             <GlassCard className="p-2 mb-6">
               <TabsList className="grid grid-cols-4 lg:grid-cols-7 xl:grid-cols-13 gap-1 bg-transparent">
                 <TabsTrigger value="oversikt" className="data-[state=active]:bg-white/40">Översikt</TabsTrigger>
@@ -416,8 +510,102 @@ export default function ObjektDetailPage() {
 
             <TabsContent value="bilder">
               <GlassCard className="p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-6">Bilder</h2>
-                <p className="text-gray-600">Här kommer bildgalleri att visas.</p>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-800">Bilder</h2>
+                  <label className="inline-flex items-center px-4 py-2 rounded-xl bg-blue-500/80 hover:bg-blue-600/80 text-white cursor-pointer">
+                    <input type="file" accept="image/*" multiple onChange={onUpload} className="hidden" />
+                    {uploading ? 'Laddar upp...' : 'Ladda upp bilder'}
+                  </label>
+                </div>
+                 {images.length === 0 ? (
+                   <p className="text-gray-600">Inga bilder uppladdade ännu.</p>
+                 ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {images.map(img => (
+                        <div key={img.id} className="aspect-square rounded-xl overflow-hidden bg-white/20 border border-white/30 relative group">
+                        {img.signedUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={img.signedUrl} alt="Objektbild" className="w-full h-full object-cover" />
+                        ) : (
+                           <div className="w-full h-full flex items-center justify-center text-gray-500">Förhandsvisning genereras...</div>
+                        )}
+                          {/* Actions overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-end justify-center p-2 opacity-0 group-hover:opacity-100">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={async () => {
+                                  // CSRF token
+                                  let csrfToken: string | undefined
+                                  try {
+                                    const tkRes = await fetch('/api/csrf-token', { credentials: 'include' })
+                                    const tkJson = tkRes.ok ? await tkRes.json() : null
+                                    csrfToken = tkJson?.token
+                                  } catch {}
+                                  await fetch(`/api/properties/${id}/images`, {
+                                    method: 'PUT',
+                                    headers: csrfToken ? { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ imageId: img.id, isPrimary: true })
+                                  })
+                                  // refresh images
+                                  const res = await fetch(`/api/properties/${id}/images`)
+                                  if (res.ok) {
+                                    const json = await res.json()
+                                    const items: { id: string }[] = (json?.data || []).map((r: any) => ({ id: r.id }))
+                                    // re-use CSRF for signed-url requests
+                                    const signed = await Promise.all(
+                                      items.map(async (it) => {
+                                        const sr = await fetch(`/api/properties/${id}/images/signed-url`, {
+                                          method: 'POST',
+                                          headers: csrfToken ? { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ imageId: it.id, expiresIn: 600 })
+                                        })
+                                        if (!sr.ok) return { id: it.id, signedUrl: undefined }
+                                        const sj = await sr.json()
+                                        return { id: it.id, signedUrl: sj?.data?.signedUrl as string | undefined }
+                                      })
+                                    )
+                                    setImages(signed)
+                                  }
+                                }}
+                                className="px-3 py-1 rounded bg-white/80 text-gray-800 text-sm hover:bg-white"
+                              >Primär</button>
+                              <button
+                                onClick={async () => {
+                                  // CSRF token
+                                  let csrfToken: string | undefined
+                                  try {
+                                    const tkRes = await fetch('/api/csrf-token', { credentials: 'include' })
+                                    const tkJson = tkRes.ok ? await tkRes.json() : null
+                                    csrfToken = tkJson?.token
+                                  } catch {}
+                                  await fetch(`/api/properties/${id}/images/${img.id}`, { method: 'DELETE', headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : undefined })
+                                  const res = await fetch(`/api/properties/${id}/images`)
+                                  if (res.ok) {
+                                    const json = await res.json()
+                                    const items: { id: string }[] = (json?.data || []).map((r: any) => ({ id: r.id }))
+                                    const signed = await Promise.all(
+                                      items.map(async (it) => {
+                                        const sr = await fetch(`/api/properties/${id}/images/signed-url`, {
+                                          method: 'POST',
+                                          headers: csrfToken ? { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ imageId: it.id, expiresIn: 600 })
+                                        })
+                                        if (!sr.ok) return { id: it.id, signedUrl: undefined }
+                                        const sj = await sr.json()
+                                        return { id: it.id, signedUrl: sj?.data?.signedUrl as string | undefined }
+                                      })
+                                    )
+                                    setImages(signed)
+                                  }
+                                }}
+                                className="px-3 py-1 rounded bg-red-500/90 text-white text-sm hover:bg-red-600"
+                              >Ta bort</button>
+                            </div>
+                          </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </GlassCard>
             </TabsContent>
 

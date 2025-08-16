@@ -6,9 +6,22 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // Validate environment configuration early to avoid vague runtime errors
+  if (!supabaseUrl || !/^https?:\/\//.test(supabaseUrl)) {
+    console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_URL is missing or invalid. Received:', supabaseUrl)
+    throw new Error('Supabase misconfigured: set NEXT_PUBLIC_SUPABASE_URL to your project URL (https://xxxx.supabase.co)')
+  }
+  if (!supabaseAnonKey) {
+    console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_ANON_KEY is missing')
+    throw new Error('Supabase misconfigured: set NEXT_PUBLIC_SUPABASE_ANON_KEY to your project anon key')
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl!,
+    supabaseAnonKey!,
     {
       cookies: {
         getAll() {
@@ -35,14 +48,20 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Check for mock auth cookie
-  const hasMockAuth = request.cookies.get('mock-auth')?.value === 'true'
-
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/auth', '/register', '/demo-', '/objekt']
+  const allowTestRoutes = process.env.NODE_ENV !== 'production' || process.env.ALLOW_TEST_ROUTES === 'true'
+  const publicRoutes = [
+    '/login',
+    '/auth',
+    '/register',
+    '/demo-',
+    '/objekt',
+    // Allow test APIs in non-production to run without auth (for E2E setup)
+    ...(allowTestRoutes ? ['/api/test/create-user', '/api/test/login', '/api/test/create-objekt', '/api/test/list-objekt'] : [])
+  ]
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
-  if (!user && !isPublicRoute && !hasMockAuth) {
+  if (!user && !isPublicRoute) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/login'

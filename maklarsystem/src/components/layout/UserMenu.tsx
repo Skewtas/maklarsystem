@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { User, LogOut, Settings, ChevronDown } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { signOut } from '@/app/auth/actions'
+import { createClient } from '@/utils/supabase/client'
 import { toast } from 'sonner'
 import { useUser } from '@/hooks/useUser'
 
@@ -12,10 +12,12 @@ export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
   const { user, loading } = useUser()
+  const supabase = createClient()
 
   const handleLogout = async () => {
     try {
-      await signOut()
+      await supabase.auth.signOut()
+      router.push('/login')
     } catch (error) {
       toast.error('Kunde inte logga ut')
     }

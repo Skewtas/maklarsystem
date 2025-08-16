@@ -20,12 +20,7 @@ export async function fetchObjekt(supabase: SupabaseClient<Database>, filters?: 
   
   let query = supabase
     .from('objekt')
-    .select(`
-      *,
-      maklare:users!maklare_id(id, full_name, email),
-      saljare:kontakter!saljare_id(id, fornamn, efternamn),
-      kopare:kontakter!kopare_id(id, fornamn, efternamn)
-    `)
+    .select(`*`)
     .order('created_at', { ascending: false })
 
   if (validatedFilters?.status && validatedFilters.status !== 'alla') {
@@ -48,14 +43,7 @@ export async function fetchObjekt(supabase: SupabaseClient<Database>, filters?: 
 export async function fetchObjektById(supabase: SupabaseClient<Database>, id: string) {
   const { data, error } = await supabase
     .from('objekt')
-    .select(`
-      *,
-      maklare:users!maklare_id(id, full_name, email),
-      saljare:kontakter!saljare_id(id, fornamn, efternamn, email, telefon),
-      kopare:kontakter!kopare_id(id, fornamn, efternamn, email, telefon),
-      visningar(*),
-      bud(*, kontakt:kontakter!kontakt_id(fornamn, efternamn))
-    `)
+    .select(`*`)
     .eq('id', id)
     .single()
 
@@ -68,10 +56,38 @@ export async function createObjekt(supabase: SupabaseClient<Database>, objekt: V
   try {
     // Validate input data
     const validatedData = objektCreateSchema.parse(objekt)
+    // Ensure required DB fields present
+    const payload: any = { ...validatedData }
+    if (!payload.objektnummer) {
+      payload.objektnummer = `OBJ-${Date.now()}`
+    }
+
+    // Allow-list only actual DB columns for insert to avoid 400 on unknown columns
+    const dbPayload: ObjektInsert = {
+      objektnummer: String(payload.objektnummer),
+      typ: payload.typ,
+      status: payload.status ?? 'kundbearbetning',
+      adress: payload.adress,
+      postnummer: String(payload.postnummer || '').replace(/\s/g, ''),
+      ort: payload.ort,
+      kommun: payload.kommun,
+      lan: payload.lan ?? 'Stockholm',
+      utgangspris: payload.utgangspris ?? null,
+      slutpris: payload.slutpris ?? null,
+      boarea: payload.boarea ?? null,
+      biarea: payload.biarea ?? null,
+      tomtarea: payload.tomtarea ?? null,
+      rum: payload.rum ?? null,
+      byggaar: payload.byggaar ?? null,
+      maklare_id: payload.maklare_id,
+      saljare_id: payload.saljare_id ?? null,
+      kopare_id: payload.kopare_id ?? null,
+      beskrivning: payload.beskrivning ?? null,
+    }
     
     const { data, error } = await supabase
       .from('objekt')
-      .insert(validatedData as ObjektInsert)
+      .insert(dbPayload)
       .select()
       .single()
 

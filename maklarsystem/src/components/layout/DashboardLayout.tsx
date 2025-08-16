@@ -17,12 +17,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, loading } = useSupabase()
   const router = useRouter()
 
-  // Temporärt avaktiverat för testning
-  // useEffect(() => {
-  //   if (!loading && !user) {
-  //     router.push('/login')
-  //   }
-  // }, [user, loading, router])
+  // Kräv inloggning: redirecta till /login när ingen user finns
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [user, loading, router])
 
   // Show loading state while checking authentication
   if (loading) {
@@ -36,10 +36,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     )
   }
 
-  // Temporärt avaktiverat för testning
-  // if (!user) {
-  //   return null
-  // }
+  // När vi kommit hit har vi antingen user eller redirect skett
 
   return (
     <div className="min-h-screen bg-gray-50 flex relative">

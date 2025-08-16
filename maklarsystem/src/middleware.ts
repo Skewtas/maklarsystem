@@ -4,7 +4,8 @@ import {
   securityMiddleware,
   publicRouteMiddleware,
   authRouteMiddleware,
-  apiRouteMiddleware 
+  apiRouteMiddleware,
+  uploadRouteMiddleware
 } from '@/middleware/security'
 
 export async function middleware(request: NextRequest) {
@@ -27,6 +28,17 @@ export async function middleware(request: NextRequest) {
   
   // API routes
   if (path.startsWith('/api/')) {
+    // Allow dev test routes to bypass CSRF to simplify E2E auth bootstrap
+    if ((process.env.NODE_ENV !== 'production' || process.env.ALLOW_TEST_ROUTES === 'true') &&
+        (path.startsWith('/api/test/create-user') || path.startsWith('/api/test/login') || path.startsWith('/api/test/create-objekt'))) {
+      return await updateSession(request)
+    }
+    // Treat file upload endpoints as upload routes (separate rate limit & CSRF handling)
+    if (path.match(/^\/api\/properties\/.+\/images(\/signed-url)?$/)) {
+      return uploadRouteMiddleware(request, async (req) => {
+        return await updateSession(req)
+      })
+    }
     return apiRouteMiddleware(request, async (req) => {
       return await updateSession(req)
     })

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { ArrowLeft, Save } from 'lucide-react'
@@ -10,6 +10,8 @@ import Link from 'next/link'
 import { useCreateObjekt } from '@/lib/api/objekt'
 import { toast } from 'sonner'
 import { objektFormSchema, objektFormDefaults, type ObjektFormData } from '@/lib/schemas/objekt-form.schema'
+import { BYGGMATERIAL_VALUES, VENTILATION_VALUES, ENERGY_CLASS_VALUES, KOK_VALUES } from '@/lib/enums'
+import type { ValidatedObjektCreate } from '@/types/objekt.types'
 import { GrundinformationSection } from '@/components/forms/sections/GrundinformationSection'
 import { InteriorSection } from '@/components/forms/sections/InteriorSection'
 import { BeskrivningarSection } from '@/components/forms/sections/BeskrivningarSection'
@@ -22,7 +24,7 @@ const GlassCard = ({ children, className = "", hover = true, ...props }: {
   children: React.ReactNode
   className?: string
   hover?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }) => (
   <div 
     className={`backdrop-blur-xl bg-white/20 rounded-3xl border border-white/30 shadow-xl transition-all duration-300 ${hover ? 'hover:bg-white/30 hover:shadow-2xl hover:scale-[1.02]' : ''} ${className}`}
@@ -99,11 +101,8 @@ export default function NyttObjektPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    setValue,
-    getValues
   } = useForm<ObjektFormData>({
-    resolver: zodResolver(objektFormSchema) as any,
+    resolver: zodResolver(objektFormSchema) as unknown as Resolver<ObjektFormData>,
     defaultValues: objektFormDefaults,
   })
 
@@ -115,7 +114,7 @@ export default function NyttObjektPage() {
     }
   }, [setActiveSection])
 
-  const onSubmit = async (data: ObjektFormData) => {
+  const onSubmit = useCallback(async (data: ObjektFormData) => {
     console.log('Form data received:', data)
     console.log('Form validation errors:', errors)
     
@@ -127,9 +126,41 @@ export default function NyttObjektPage() {
     }
     
     // Declare apiData outside try block so it's accessible in catch block
-    let apiData: any = null
+    let apiData: ValidatedObjektCreate | null = null
     
     try {
+      // Helpers to normalize Swedish numeric input and enum-safe mapping
+      const toNumber = (value?: string) => {
+        if (value === undefined || value === null || value === '') return null
+        const normalized = String(value).replace(/\s/g, '').replace(',', '.')
+        const parsed = parseFloat(normalized)
+        return Number.isFinite(parsed) ? parsed : null
+      }
+
+      const toInteger = (value?: string) => {
+        if (value === undefined || value === null || value === '') return null
+        const normalized = String(value).replace(/\s/g, '')
+        const parsed = parseInt(normalized, 10)
+        return Number.isFinite(parsed) ? parsed : null
+      }
+
+      const kokInput = data.kokstyp as string | undefined
+      const byggInput = data.konstruktion as string | undefined
+      const energiInput = data.energiklass as string | undefined
+      const ventInput = data.ventilationstyp as string | undefined
+
+      const safeKok = kokInput && (KOK_VALUES as readonly string[]).includes(kokInput)
+        ? (kokInput as typeof KOK_VALUES[number])
+        : null
+      const safeByggmaterial = byggInput && (BYGGMATERIAL_VALUES as readonly string[]).includes(byggInput)
+        ? (byggInput as typeof BYGGMATERIAL_VALUES[number])
+        : null
+      const safeEnergiklass = energiInput && (ENERGY_CLASS_VALUES as readonly string[]).includes(energiInput)
+        ? (energiInput as typeof ENERGY_CLASS_VALUES[number])
+        : null
+      const safeVentilation = ventInput && (VENTILATION_VALUES as readonly string[]).includes(ventInput)
+        ? (ventInput as typeof VENTILATION_VALUES[number])
+        : null
       // Transform form data to API format - mapping form fields to database fields
       apiData = {
         // Required fields - these match database column names exactly
@@ -144,11 +175,11 @@ export default function NyttObjektPage() {
         
         // Optional fields from form - map form field names to database field names
         beskrivning: data.lang_beskrivning || data.kort_beskrivning || null,
-        boarea: data.boarea ? parseFloat(data.boarea) : null,
-        biarea: data.biarea ? parseFloat(data.biarea) : null,
-        rum: data.antal_rum ? parseFloat(data.antal_rum) : null,
-        antal_sovrum: data.antal_sovrum ? parseInt(data.antal_sovrum) : null,
-        byggaar: data.byggaar ? parseInt(data.byggaar) : null, // Fixed field name to match form
+        boarea: toInteger(data.boarea),
+        biarea: toInteger(data.biarea),
+        rum: toInteger(data.antal_rum),
+        antal_sovrum: toInteger(data.antal_sovrum),
+        byggaar: toInteger(data.byggaar), // match DB field
         fastighetsbeteckning: data.fastighetsbeteckning || null,
         
         // Map ownership type based on form field
@@ -157,46 +188,48 @@ export default function NyttObjektPage() {
                        data.upplatelse_form === 'hyresratt' ? 'hyresratt' :
                        data.upplatelse_form === 'arrende' ? 'arrende' : null,
         
-        // Map kitchen type
-        kok: data.kokstyp === 'oppet' ? 'oppet' :
-             data.kokstyp === 'halvoppet' ? 'halvoppet' :
-             data.kokstyp === 'kokso' ? 'kokso' : null,
+         // Map kitchen type (validated against enum)
+        kok: safeKok,
         
-        // Map building material
-        byggmaterial: data.konstruktion as any || null,
+        // Map building material (validated against enum)
+        byggmaterial: safeByggmaterial,
         
-        // Map energy class
-        energiklass: data.energiklass as any || null,
+        // Map energy class (validated against enum)
+        energiklass: safeEnergiklass,
         
-        // Map ventilation
-        ventilation: data.ventilationstyp as any || null,
+        // Map ventilation (validated against enum)
+        ventilation: safeVentilation,
         
-        // Map financial fields - ensure correct column names
-        avgift: data.avgift_manad ? parseFloat(data.avgift_manad) : null,
-        driftkostnad: data.driftkostnad_manad ? parseFloat(data.driftkostnad_manad) : null,
+        // Map financial fields - ensure correct column names per schema
+        manadsavgift: toNumber(data.avgift_manad),
+        driftkostnad: toNumber(data.driftkostnad_manad),
         
         // Map floor
-        vaning: data.vaning ? parseInt(data.vaning) : null,
+        vaning: toInteger(data.vaning),
         
         // Map boolean fields
         hiss: data.hiss === 'ja' ? true : data.hiss === 'nej' ? false : null,
         balkong_terrass: data.balkong_uteplats_typ ? true : false,
         
         // Map location coordinates
-        latitude: data.latitude ? parseFloat(data.latitude) : null,
-        longitude: data.longitude ? parseFloat(data.longitude) : null,
+        latitude: toNumber(data.latitude || undefined),
+        longitude: toNumber(data.longitude || undefined),
         
         // Additional text fields
         marknadsforingstext: data.saljrubrik || null,
         salutext: data.saljfras || null,
         
         // Additional optional fields can be mapped here as needed
-      }
+      } as ValidatedObjektCreate
       
       console.log('API data to send:', apiData)
-      await createObjekt.mutateAsync(apiData)
+      const created = await createObjekt.mutateAsync(apiData)
       toast.success('Objekt skapat framgångsrikt!')
-      router.push('/objekt')
+      if (created && typeof created === 'object' && 'id' in created && created.id) {
+        router.push(`/objekt/${String((created as { id: string }).id)}`)
+      } else {
+        router.push('/objekt')
+      }
     } catch (error) {
       console.error('Error creating objekt:', {
         error,
@@ -217,7 +250,7 @@ export default function NyttObjektPage() {
         toast.error('Fel vid skapande av objekt')
       }
     }
-  }
+  }, [createObjekt, errors, router, user])
 
   const handleSave = useCallback(() => {
     handleSubmit(onSubmit)()

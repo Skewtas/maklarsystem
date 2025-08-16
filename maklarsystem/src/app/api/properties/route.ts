@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/utils/supabase/server';
 import { propertySearchSchema } from '@/lib/validation/schemas/property.schema';
+import { objektCreateSchema } from '@/lib/validation/schemas/objekt.schema';
 import { PropertyListApiResponse, PropertyListItem } from '@/types/property.types';
 
 // ============================================================
@@ -20,7 +21,7 @@ import { PropertyListApiResponse, PropertyListItem } from '@/types/property.type
 const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-  sortBy: z.enum(['price', 'area', 'rooms', 'buildYear', 'publishedAt', 'title']).default('publishedAt'),
+  sortBy: z.enum(['price', 'area', 'rooms', 'date']).default('date'),
   sortOrder: z.enum(['asc', 'desc']).default('desc')
 });
 
@@ -80,46 +81,46 @@ function buildPropertyQuery(supabase: any, filters: SearchParams & PaginationPar
     `);
   }
 
-  // Property types filter
-  if (filters.propertyTypes && filters.propertyTypes.length > 0) {
-    query = query.in('property_type', filters.propertyTypes);
+  // Property type filter
+  if (filters.propertyType) {
+    query = query.eq('property_type', filters.propertyType);
   }
 
   // Status filter
-  if (filters.statuses && filters.statuses.length > 0) {
-    query = query.in('status', filters.statuses);
+  if (filters.status) {
+    query = query.eq('status', filters.status);
   }
 
   // Price range filters
-  if (filters.priceMin !== undefined) {
-    query = query.gte('asking_price', filters.priceMin);
+  if (filters.minPrice !== undefined) {
+    query = query.gte('asking_price', filters.minPrice);
   }
-  if (filters.priceMax !== undefined) {
-    query = query.lte('asking_price', filters.priceMax);
+  if (filters.maxPrice !== undefined) {
+    query = query.lte('asking_price', filters.maxPrice);
   }
 
   // Area range filters
-  if (filters.areaMin !== undefined) {
-    query = query.gte('living_area', filters.areaMin);
+  if (filters.minLivingArea !== undefined) {
+    query = query.gte('living_area', filters.minLivingArea);
   }
-  if (filters.areaMax !== undefined) {
-    query = query.lte('living_area', filters.areaMax);
+  if (filters.maxLivingArea !== undefined) {
+    query = query.lte('living_area', filters.maxLivingArea);
   }
 
   // Rooms range filters
-  if (filters.roomsMin !== undefined) {
-    query = query.gte('rooms', filters.roomsMin);
+  if (filters.minRooms !== undefined) {
+    query = query.gte('rooms', filters.minRooms);
   }
-  if (filters.roomsMax !== undefined) {
-    query = query.lte('rooms', filters.roomsMax);
+  if (filters.maxRooms !== undefined) {
+    query = query.lte('rooms', filters.maxRooms);
   }
 
   // Build year range filters
-  if (filters.buildYearMin !== undefined) {
-    query = query.gte('build_year', filters.buildYearMin);
+  if (filters.minBuildYear !== undefined) {
+    query = query.gte('build_year', filters.minBuildYear);
   }
-  if (filters.buildYearMax !== undefined) {
-    query = query.lte('build_year', filters.buildYearMax);
+  if (filters.maxBuildYear !== undefined) {
+    query = query.lte('build_year', filters.maxBuildYear);
   }
 
   // Location filters
@@ -181,7 +182,7 @@ function transformToPropertyListItem(row: any): PropertyListItem {
       createdAt: new Date(primaryImage.created_at || row.created_at)
     } : undefined,
     imageCount: row.property_images?.length || 0,
-    publishedAt,
+    publishedAt: publishedAt || undefined,
     viewCount: row.view_count || 0,
     isNew: daysSincePublished <= 7,
     daysSincePublished,
@@ -224,13 +225,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const rawParams = Object.fromEntries(searchParams.entries());
 
-    // Parse array parameters
-    if (rawParams.propertyTypes) {
-      rawParams.propertyTypes = rawParams.propertyTypes.split(',');
-    }
-    if (rawParams.statuses) {
-      rawParams.statuses = rawParams.statuses.split(',');
-    }
+    // Parse array parameters - removed as schema doesn't support arrays
 
     // Validate pagination parameters
     const paginationResult = paginationSchema.safeParse(rawParams);
@@ -263,7 +258,7 @@ export async function GET(request: NextRequest) {
     const allParams = { ...validatedSearchParams, ...paginationParams };
 
     // Initialize Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Build and execute the query
     let query = buildPropertyQuery(supabase, allParams);
@@ -273,9 +268,7 @@ export async function GET(request: NextRequest) {
       price: 'asking_price',
       area: 'living_area', 
       rooms: 'rooms',
-      buildYear: 'build_year',
-      publishedAt: 'published_at',
-      title: 'title'
+      date: 'published_at'
     }[allParams.sortBy] || 'published_at';
 
     query = query.order(sortColumn, { ascending: allParams.sortOrder === 'asc' });
@@ -393,7 +386,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -405,16 +398,38 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
-    
-    // This would use createPropertySchema validation
-    // For now, return a placeholder response
+
+    // Validate against objekt schema used by the form layer
+    const parsed = objektCreateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Valideringsfel',
+          errors: parsed.error.issues
+        },
+        { status: 400 }
+      );
+    }
+
+    // Insert into objekt table; add created_by from current user
+    const insertPayload = { ...parsed.data, maklare_id: parsed.data.maklare_id || user.id } as any;
+    const { data: inserted, error } = await supabase
+      .from('objekt')
+      .insert(insertPayload)
+      .select('*')
+      .single();
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, message: 'Fel vid skapande av objekt', error: error.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Skapande av fastigheter implementeras senare',
-        data: null
-      },
-      { status: 501 }
+      { success: true, message: 'Objekt skapat', data: inserted },
+      { status: 201 }
     );
 
   } catch (error) {

@@ -89,7 +89,7 @@ async function getSearchSuggestions(
         .ilike('city', searchTerm)
         .not('city', 'is', null)
         .limit(limit);
-      return [...new Set(cities?.map(r => r.city) || [])];
+      return [...new Set(cities?.map((r: any) => r.city) || [])];
       
     case 'municipality':
       const { data: municipalities } = await supabase
@@ -98,7 +98,7 @@ async function getSearchSuggestions(
         .ilike('municipality', searchTerm)
         .not('municipality', 'is', null)
         .limit(limit);
-      return [...new Set(municipalities?.map(r => r.municipality) || [])];
+      return [...new Set(municipalities?.map((r: any) => r.municipality) || [])];
       
     case 'area':
       // This would search neighborhood/area data

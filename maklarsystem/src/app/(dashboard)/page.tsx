@@ -21,6 +21,7 @@ import {
   Filter
 } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
 
 // Modern Glass Card Component - same as objekt page
 const GlassCard = ({ children, className = "", hover = true, ...props }: { 
@@ -74,10 +75,10 @@ const SearchSection = () => {
             <Filter className="w-5 h-5" />
             <span>Filter</span>
           </button>
-          <button className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 rounded-2xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+          <Link href="/nytt" className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 rounded-2xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
             <UserPlus className="w-5 h-5" />
             <span>Nytt objekt</span>
-          </button>
+          </Link>
         </div>
       </div>
     </GlassCard>

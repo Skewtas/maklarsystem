@@ -14,7 +14,6 @@ const viCompat: any = {
   useRealTimers: jest.useRealTimers.bind(jest),
 };
 
-// @ts-expect-error - define global vi for tests
 (globalThis as any).vi = viCompat;
 
 // Mock next/image to a plain img element for predictable testing
